@@ -14,8 +14,8 @@
       
       .game-window {
         background-color: #bdc3c7;
-        width: 1300px;
-        height: 1000px;
+        width: 1280px;
+        height: 720px;
         border: 10px solid #2980b9;
         border-radius: 20px;
         display: flex;
@@ -26,71 +26,7 @@
   </head>
   <body>
     <div class="game-window">
-      <<script>
-        class Card {
-          constructor(rank, suit) {
-            this.rank = rank;
-            this.suit = suit;
-          }
-          
-          toString() {
-            return `${this.rank} of ${this.suit}`;
-          }
-        }
-        
-        class Deck {
-          constructor() {
-            this.ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", "Ace"];
-            this.suits = ["Clubs", "Diamonds", "Hearts", "Spades"];
-            
-            this.cards = [];
-            for (const suit of this.suits) {
-              for (const rank of this.ranks) {
-                this.cards.push(new Card(rank, suit));
-              }
-            }
-          }
-          
-          shuffle() {
-            for (let i = this.cards.length - 1; i > 0; i--) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
-            }
-          }
-          
-          deal() {
-            return this.cards.pop();
-          }
-        }
-        
-        class Player {
-          constructor(name) {
-            this.name = name;
-            this.hand = [];
-          }
-          
-          draw(deck) {
-            this.hand.push(deck.deal());
-            return this;
-          }
-          
-          showHand() {
-            return `${this.name}'s hand: ${this.hand.join(", ")}`;
-          }
-        }
-        
-        const deck = new Deck();
-        deck.shuffle();
-        
-        const player1 = new Player("Player 1");
-        const player2 = new Player("Player 2");
-        
-        for (let i = 0; i < 2; i++) {
-          player1.draw(deck);
-          player2.draw(deck);
-        }
-        
-        document.querySelector("#message").innerHTML = `${player>
+      <!-- Insert game content here -->
     </div>
   </body>
 </html>

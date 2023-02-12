@@ -1,64 +1,52 @@
 import random
+from poker import Card
+
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.hand = []
+        
+    def set_hand(self, hand):
+        self.hand = hand
+    
+    def get_hand(self):
+        return self.hand
+
+def deal_cards(deck, players):
+    num_players = len(players)
+    
+    for i in range(num_players*2):
+        player = players[i % num_players]
+        card = deck.pop(0)
+        player.hand.append(card)
 
 def main():
+    deck = list(Card)
+    random.shuffle(deck)
+    print(deck)
 
-    # prompt user for buy-in amounts for each player
-    buy_in_player1 = int(input('Enter buy-in amount for Player 1: '))
-    buy_in_player2 = int(input('Enter buy-in amount for Player 2: '))
+    # Create the two players
+    player1 = Player("Player 1")
+    player2 = Player("Player 2")
+    players = [player1, player2]
+    
+    deal_cards(deck, players)
+    
+    # Store each player's hand in the Player object
+    for player in players:
+        player.set_hand(player.hand)
+        # print(f"{player.name}'s hand: {', '.join(str(card) for card in player.get_hand())}")
 
-    # create two players
-    players = ['Player 1', 'Player 2']
-    dealer = 0  # player 1 is the dealer in the first round
+    flop_burn = deck.pop(0)
+    flop = [deck.pop(0) for i in range(3)]
+    turn_burn = deck.pop(0)
+    turn = deck.pop(0)
+    river_burn = deck.pop(0)
+    river = deck.pop(0)
 
-    # play 5 rounds
-    for round in range(1, 6):
-        print(f'Round {round}: \n')
-
-        # create a list of 52 cards with rank and suit
-        suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
-        ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King']
-        cards = [f'{rank} of {suit}' for suit in suits for rank in ranks]
-
-        # shuffle the cards using random.shuffle() function
-        random.shuffle(cards)
-
-        # determine small blind and big blind
-        small_blind_player = (dealer + 1) % 2
-        big_blind_player = dealer
-
-        # print small blind and big blind
-        print(f'{players[small_blind_player]} is the small blind')
-        print(f'{players[big_blind_player]} is the big blind\n')
-
-        # burn one card and deal two cards to each player
-        burn_card = cards.pop(0)
-        player1_cards = [cards.pop(), cards.pop()]
-        player2_cards = [cards.pop(), cards.pop()]
-
-        # print each player's cards
-        print(f'{players[0]}: {player1_cards}')
-        print(f'{players[1]}: {player2_cards}\n')
-
-        # deal the flop
-        burn_card = cards.pop(0)
-        flop = [cards.pop(), cards.pop(), cards.pop()]
-        print(f'Flop: {flop}')
-
-        # deal the turn
-        burn_card = cards.pop(0)
-        turn = cards.pop()
-        print(f'Turn: {turn}')
-
-        # deal the river
-        burn_card = cards.pop(0)
-        river = cards.pop()
-        print(f'River: {river}')
-
-
-        # update dealer for next round
-        dealer = (dealer + 1) % 2
-
-        print('\n')
+    # print(flop)
+    # print(turn)
+    # print(river)
 
 if __name__ == '__main__':
     main()

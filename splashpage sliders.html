@@ -1,0 +1,201 @@
+<html>
+  <head>
+    <style>
+        button {
+        background-color: #2980b9;
+        color: #ecf0f1;
+        border: none;
+        border-radius: 3px;
+        padding: 10px 20px;
+        margin-right: 10px;
+        cursor: pointer;
+      }
+      .game-window {
+        width:1280px;
+        height: 580px;
+        display: flex;
+        flex-direction: column;
+      }
+      .chat-history {
+        flex: 1;
+        background-color: lightgrey;
+        overflow: auto;
+        padding: 10px;
+        font-size: 14px;
+      }
+      .chat-entry {
+        display: flex;
+        background-color: white;
+        padding: 10px;
+      }
+      .chat-entry input {
+        flex: 1;
+        font-size: 14px;
+        border: none;
+        outline: none;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-window">
+      <div class="chat-history" id="chatHistory"></div>
+      <div class="chat-entry">
+        <input type="text" id="chatEntry">
+      </div>
+    </div>
+
+    <script>
+      const chatHistory = document.getElementById("chatHistory");
+      const chatEntry = document.getElementById("chatEntry");
+
+      chatEntry.addEventListener("keyup", event => {
+        if (event.keyCode === 13) {
+          const text = chatEntry.value;
+          chatHistory.innerHTML += `You: ${text}<br>`;
+          chatEntry.value = "";
+        }
+      });
+    </script>
+  </body>
+  <html>
+  <head>
+    <style>
+        .slider {
+        width: 500px;
+        height: 30px;
+        background-color: lightgray;
+        position: relative;
+        border-radius: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+
+      .slider input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+        background: transparent;
+        outline: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        cursor: pointer;
+      }
+
+      .slider input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        background: #007aff;
+        cursor: pointer;
+        transition: background 0.15s ease-in-out;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+
+      .slider input[type="range"]::-webkit-slider-thumb:hover {
+        background: #00b0ff;
+      }
+
+      .slider-value {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 18px;
+        padding: 5px;
+      }
+
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #007aff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.15s ease-in-out;
+      }
+
+      button:hover {
+        background-color: #00b0ff;
+      }
+        
+      .chat-box {
+        height: 150px;
+        width: 500px;
+        overflow-y: scroll;
+        border: 1px solid gray;
+      }
+
+      .message {
+        padding: 10px;
+        border-bottom: 1px solid gray;
+      }
+
+      #message-input {
+        width: 25%;
+        border: 1px solid gray;
+        padding: 10px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <div class="buttons-container">
+    <button>Fold</button>
+    <button>Check</button>
+    <button>Min Raise</button>
+  </div> 
+  <div class="slider">
+        <input type="range" id="slider" min="0" max="1000" value="50">
+        <div class="slider-value" id="value">50</div>
+      </div>
+      <button id="submit-button">Bet</button>
+  
+      <script>
+        var slider = document.getElementById("slider");
+        var value = document.getElementById("value");
+        var submitButton = document.getElementById("submit-button");
+  
+        slider.oninput = function() {
+          value.innerHTML = this.value;
+        }
+  
+        submitButton.onclick = function() {
+          var sliderValue = slider.value;
+          alert("The slider value is: " + sliderValue);
+        }
+  </script>
+  
+  <body>
+    <div class="chat-box" id="chat-box">
+      <!-- Chat messages will be added here -->
+    </div>
+    <input type="text" id="message-input">
+  </body>
+  <script>
+    const chatBox = document.getElementById("chat-box");
+    const messageInput = document.getElementById("message-input");
+
+    // Add a new message to the chat box
+    function addMessage(text) {
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("message");
+      messageElement.textContent = text;
+      chatBox.appendChild(messageElement);
+    }
+
+    // Send a message when the enter key is pressed
+    messageInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        addMessage(messageInput.value);
+        messageInput.value = "";
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    });
+  </script>
+</html>
+
+
+</html>

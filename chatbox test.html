@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <style>
+      .chat-box {
+        height: 300px;
+        width: 500px;
+        overflow-y: scroll;
+        border: 1px solid gray;
+      }
+
+      .message {
+        padding: 10px;
+        border-bottom: 1px solid gray;
+      }
+
+      #message-input {
+        width: 25%;
+        border: 1px solid gray;
+        padding: 10px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-box" id="chat-box">
+      <!-- Chat messages will be added here -->
+    </div>
+    <input type="text" id="message-input">
+  </body>
+  <script>
+    const chatBox = document.getElementById("chat-box");
+    const messageInput = document.getElementById("message-input");
+
+    // Add a new message to the chat box
+    function addMessage(text) {
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("message");
+      messageElement.textContent = text;
+      chatBox.appendChild(messageElement);
+    }
+
+    // Send a message when the enter key is pressed
+    messageInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        addMessage(messageInput.value);
+        messageInput.value = "";
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    });
+  </script>
+</html>

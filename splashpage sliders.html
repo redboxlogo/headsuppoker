@@ -40,9 +40,6 @@
   <body>
     <div class="game-window">
       <div class="chat-history" id="chatHistory"></div>
-      <div class="chat-entry">
-        <input type="text" id="chatEntry">
-      </div>
     </div>
 
     <script>
@@ -143,9 +140,31 @@
     </style>
   </head>
   <div class="buttons-container">
-    <button>Fold</button>
-    <button>Check</button>
-    <button>Min Raise</button>
+    <button id="submitbutton1">Fold</button>
+    <button id="submitbutton2">Check</button>
+    <button id="submitbutton3">Min Raise</button>
+    <script>
+    const submitbutton1 = document.getElementById("submitbutton1");
+
+      submitbutton1.addEventListener("click", function() {
+        alert("Fold");
+    
+      })
+      </script>
+      <script>  
+      const submitbutton2 = document.getElementById("submitbutton2");
+
+        submitbutton2.addEventListener("click", function() {
+          alert("Check");
+      
+        })</script>
+        <script>  
+        const submitbutton3 = document.getElementById("submitbutton3");
+
+          submitbutton3.addEventListener("click", function() {
+            alert("Min Raise");
+        
+          })</script>
   </div> 
   <div class="slider">
         <input type="range" id="slider" min="0" max="1000" value="50">
@@ -195,7 +214,4 @@
       }
     });
   </script>
-</html>
-
-
 </html>

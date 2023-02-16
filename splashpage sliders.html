@@ -69,7 +69,7 @@
 
       .slider input[type="range"] {
         -webkit-appearance: none;
-        width: 100%;
+        width: calc(90%);
         height: 100%;
         border-radius: 15px;
         background: transparent;
@@ -83,7 +83,7 @@
 
       .slider input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
-        width: 20px;
+        width: 40px;
         height: 20px;
         border-radius: 10px;
         background: #007aff;
@@ -127,7 +127,7 @@
       }
 
       .message {
-        padding: 10px;
+        padding: 5px;
         border-bottom: 1px solid gray;
       }
 
@@ -137,12 +137,23 @@
         padding: 10px;
         margin-top: 10px;
       }
+
+      .slider-container {
+       display: flex;
+       align-items: center;
+}
+
+input[type="text"] {
+  width: 50px;
+  margin-right: 10px;
+}
     </style>
   </head>
   <div class="buttons-container">
     <button id="submitbutton1">Fold</button>
     <button id="submitbutton2">Check</button>
     <button id="submitbutton3">Min Raise</button>
+    <button id="set-value-button">Bet</button>
     <script>
     const submitbutton1 = document.getElementById("submitbutton1");
 
@@ -170,6 +181,7 @@
         <input type="range" id="slider" min="0" max="1000" value="50">
         <div class="slider-value" id="value">50</div>
       </div>
+      <input type="text" id="value-input">
       <button id="submit-button">Bet</button>
   
       <script>

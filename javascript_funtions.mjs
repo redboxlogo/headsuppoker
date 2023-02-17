@@ -54,6 +54,37 @@ export function dealHands(deck, smallBlind, bigBlind) {
   return [smallBlind, bigBlind];
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function dealFlop(deck, commCards){
+  deck.shift(); //burn
+  commCards[0] = deck.shift(); //Flop 1
+  commCards[1] = deck.shift(); //Flop 2
+  commCards[2] = deck.shift(); //Flop 3
+  return;
+}
+
+export function dealTurn(deck, commCards){
+  deck.shift(); //burn
+  commCards[3] = deck.shift(); //Turn
+  return;
+}
+
+export function dealRiver(deck, commCards){
+  deck.shift(); //burn
+  commCards[4] = deck.shift(); //River
+  return;
+}
+
+export function genCommArray(){
+  return new Array(5);
+}
+
+/*export function playGame(){
+  const commCards[5];
+
+  const deck = createDeck();
+  shuffleDeck(deck)
+
+
+}*/

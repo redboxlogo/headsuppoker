@@ -18,3 +18,12 @@ functions.dealHands(deck, player1, player2);            // Deal 4 cards from the
                                                         //player1 is small blind; player 2 is big blind
 console.log(player1);                                // Outputs the small blind player object in the console, with 2 cards in its `cards` array
 console.log(player2);                                  // Outputs the big blind player object in the console, with 2 cards in its `cards` array
+
+const commCards = functions.genCommArray();
+console.log(commCards);
+functions.dealFlop(shuffledDeck, commCards);
+console.log(commCards);
+functions.dealTurn(shuffledDeck, commCards);
+console.log(commCards);
+functions.dealRiver(shuffledDeck, commCards);
+console.log(commCards);

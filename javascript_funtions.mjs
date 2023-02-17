@@ -13,8 +13,6 @@ export function createDeck() {
   return deck;
 }
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function shuffleDeck(deck) {
@@ -36,7 +34,6 @@ export function createPlayer(name) {
 
   return player;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -80,6 +77,8 @@ export function genCommArray(){
   return new Array(5);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function determineWinner(player1, player2, communityCards) {
   const player1Hand = player1.cards.concat(communityCards); // Concatenate the player's two cards with the community cards
   const player2Hand = player2.cards.concat(communityCards); // Concatenate the player's two cards with the community cards
@@ -110,39 +109,6 @@ export function determineWinner(player1, player2, communityCards) {
   }
 }
 
-function rankHand(cards) {
-  //console.log(cards);
-  const sortedCards = sortCardsByRank(cards);
-
-  //console.log(sortedCards);
-
-  if(isFlush(sortedCards)){
-    console.log("FLUSH");
-  }
-
-  if (isRoyalFlush(sortedCards)) {
-    return 10;
-  } else if (isStraightFlush(sortedCards)) {
-    return 9;
-  } else if (isFourOfAKind(sortedCards)) {
-    return 8;
-  } else if (isFullHouse(sortedCards)) {
-    return 7;
-  } else if (isFlush(sortedCards)) {
-    return 6;
-  } else if (isStraight(sortedCards)) {
-    return 5;
-  } else if (isThreeOfAKind(sortedCards)) {
-    return 4;
-  } else if (isTwoPair(sortedCards)) {
-    return 3;
-  } else if (isPair(sortedCards)) {
-    return 2;
-  } else {
-    return 1;
-  }
-}
-
 function sortCardsByRank(cards) {
   return cards.sort((a, b) => {
     //"1" is first character of 10, so assign it a weight of 9. A is defined as 13, 1 is not needed. 
@@ -151,73 +117,85 @@ function sortCardsByRank(cards) {
   });
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+function rankHand(cards) {
+  // console.log(cards);
+  const sortedCards = sortCardsByRank(cards);
 
-function isPair(cards) {
-  for (let i = 0; i < cards.length - 1; i++) {
-    if (cards[i].rank === cards[i + 1].rank) {
+  // console.log(sortedCards);
+
+  if(isStraight(sortedCards)){
+    console.log("STRAIGHT");
+  }
+
+  if(isFlush(sortedCards)){
+    console.log("FLUSH");
+  }
+
+  if(isStraightFlush(sortedCards)){
+    console.log("STRAIGHT FLUSH");
+  }
+
+  if (isRoyalFlush(sortedCards)) {
+    return 10;
+  } else if (isStraightFlush(sortedCards)) {
+    return 9;
+  } else if (isFourOfAKind(sortedCards)) {          // Check
+    return 8;
+  } else if (isFullHouse(sortedCards)) {            // Check
+    return 7;
+  } else if (isFlush(sortedCards)) {                // Working
+    return 6;
+  } else if (isStraight(sortedCards)) {             // Working
+    return 5;
+  } else if (isThreeOfAKind(sortedCards)) {         // Check
+    return 4;
+  } else if (isTwoPair(sortedCards)) {              // Check
+    return 3;
+  } else if (isPair(sortedCards)) {                 // Check
+    return 2;
+  } else {
+    return 1;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function getHighCard(cards) {
+  return sortCardsByRank(cards)[4].rank;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function isRoyalFlush(cards) {
+  return isStraightFlush(cards) && cards[0].rank === 'Ten' && cards[4].rank === 'Ace';
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function isStraightFlush(cards) {
+  return isFlush(cards) && isStraight(cards);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function isFourOfAKind(cards) {
+  for (let i = 0; i < cards.length - 3; i++) {
+    if (cards[i].rank === cards[i + 1].rank && cards[i + 1].rank === cards[i + 2].rank && cards[i + 2].rank === cards[i + 3].rank) {
       return true;
     }
   }
   return false;
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function isTwoPair(cards) {
-  let pairs = 0;
-  for (let i = 0; i < cards.length - 1; i++) {
-    if (cards[i].rank === cards[i + 1].rank) {
-      pairs++;
-      i++;
-    }
-  }
-  return pairs === 2;
+function isFullHouse(cards) {
+  return isThreeOfAKind(cards) && isPair(cards);
 }
 
-function isThreeOfAKind(cards) {
-  for (let i = 0; i < cards.length - 2; i++) {
-    if (cards[i].rank === cards[i + 1].rank && cards[i + 1].rank === cards[i + 2].rank) {
-      return true;
-    }
-  }
-  return false;
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Not working
-function isStraight(cards) {
-  // // Check for the special case of A-5-4-3-2, which is a valid straight
-  // if (cards[0][0] === 'A' && cards[1][0] === 'Five' && cards[2][0]] === 'Four' && cards[3][0] === 'Three' && cards[4][0] === 'Two') {
-  //   return true;
-  // }
-
-  // for (let i = 0; i < cards.length - 1; i++) {
-  //   if (cards[i].rank !== cards[i + 1].rank - 1) {
-  //     return false;
-  //   }
-  // }
-  // return true;
-  // To check for a straight
-  // Iterate through hand from top rank to low rank, looking for 5 in a row. Duplicates will be handled in the next iteration of loop anyways.
-  // Also need to add one final check for A-2-3-4-5 straight which will wrap around the array.
-  // var straightCount = 0;
-  // const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
-  // for(var i = 6; i > 4; i--){
-  //   var startCard = cards[i][0];
-  //   for(var j = 1; j < 5; j++){
-  //     if((rankOrder[startCard] - j) == cards[i - j][1]){
-  //       straightCount++;
-  //     } else {
-  //       break; 
-  //     }
-  //     if(straightCount == 5){ return true; }
-  //   }
-  //   straightCount = 0;
-  // } //Check for A-2-3-4-5 condition
-  // if()
-  // return false;
-}
-
-
-//Working
+// Working
+// need to check for high card
 function isFlush(cards) {
   // To check for a flush
   // Iterate through hand from top rank to low rank, looking for 5 of same suit. 
@@ -234,29 +212,130 @@ var flushCount = 0;
   return false;
 }
 
-function isFullHouse(cards) {
-  return isThreeOfAKind(cards) && isPair(cards);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Working
+// need to check for high card
+// To check for a straight
+function isStraight(cards) {
+  
+  let straightBool = false;
+  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = [];
+
+  // get ranks for each card
+  for(var i = 0; i < cards.length; i++){
+    CardRanks[i] = cards[i][0];
+  }
+
+  // function to get unique card ranks from array
+  var UniqueRanks = CardRanks.filter((value, index, self) => {    
+    return self.indexOf(value) === index;
+  });
+
+  // impossible for stright if there are not at least 5 unique ranks
+  if(UniqueRanks.length < 5){
+    return false;
+  }
+
+  // assign weights for each card value
+  for(let i = 0; i < UniqueRanks.length; i++){
+    UniqueRanks[i] = rankOrder[UniqueRanks[i]]
+  }
+
+  // console.log(UniqueRanks)
+
+  // Check for the special case of A-5-4-3-2, which is a valid straight
+  if (UniqueRanks.includes('13') && UniqueRanks.includes('4') && UniqueRanks.includes('3') && UniqueRanks.includes('2') && UniqueRanks.includes('1')) {
+    straightBool = true;
+  }
+
+  // console.log(straightBool)
+
+  // console.log("check low")
+
+
+  // Check for low straights 
+  if(straightBool == false){
+    for (let i = 0; i < 4; i++) {
+      // console.log(UniqueRanks[i])
+      // console.log(UniqueRanks[i+1])
+      // console.log("------------------------")
+      if (UniqueRanks[i] == UniqueRanks[i+1] - 1) {
+        straightBool = true;
+      } 
+      else{
+        straightBool = false;
+        break;
+      }
+    }
+  }
+
+  // console.log(straightBool)
+
+  // console.log("check HIGH")
+
+  // Check for high straights
+  if(straightBool == false){
+
+    for (let i = UniqueRanks.length-1; i > UniqueRanks.length-5; i--) {
+      // console.log(UniqueRanks[i])
+      // console.log(UniqueRanks[i-1])
+      // console.log("------------------------")
+      if (UniqueRanks[i] == UniqueRanks[i-1] + 1) {
+        straightBool = true;
+      } 
+      else{
+        straightBool = false;
+        break;
+      }
+    }
+  }
+
+  // console.log(straightBool)
+
+
+  if(straightBool == true){
+    return true;
+  } else{
+    return false;
+  }
+
 }
 
-function isFourOfAKind(cards) {
-  for (let i = 0; i < cards.length - 3; i++) {
-    if (cards[i].rank === cards[i + 1].rank && cards[i + 1].rank === cards[i + 2].rank && cards[i + 2].rank === cards[i + 3].rank) {
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function isThreeOfAKind(cards) {
+  for (let i = 0; i < cards.length - 2; i++) {
+    if (cards[i].rank === cards[i + 1].rank && cards[i + 1].rank === cards[i + 2].rank) {
       return true;
     }
   }
   return false;
 }
 
-function isStraightFlush(cards) {
-  return isFlush(cards) && isStraight(cards);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function isTwoPair(cards) {
+  let pairs = 0;
+  for (let i = 0; i < cards.length - 1; i++) {
+    if (cards[i].rank === cards[i + 1].rank) {
+      pairs++;
+      i++;
+    }
+  }
+  return pairs === 2;
 }
 
-function isRoyalFlush(cards) {
-  return isStraightFlush(cards) && cards[0].rank === 'Ten' && cards[4].rank === 'Ace';
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function getHighCard(cards) {
-  return sortCardsByRank(cards)[4].rank;
+function isPair(cards) {
+  for (let i = 0; i < cards.length - 1; i++) {
+    if (cards[i].rank === cards[i + 1].rank) {
+      return true;
+    }
+  }
+  return false;
 }
 
 

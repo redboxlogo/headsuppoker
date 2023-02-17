@@ -27,3 +27,6 @@ functions.dealTurn(shuffledDeck, commCards);
 console.log(commCards);
 functions.dealRiver(shuffledDeck, commCards);
 console.log(commCards);
+
+var winner = functions.determineWinner(player1, player2, commCards)
+console.log(winner)

@@ -83,10 +83,14 @@ export function genCommArray(){
 export function determineWinner(player1, player2, communityCards) {
   const player1Hand = player1.cards.concat(communityCards); // Concatenate the player's two cards with the community cards
   const player2Hand = player2.cards.concat(communityCards); // Concatenate the player's two cards with the community cards
+  //console.log(player1Hand);
+  //console.log(player2Hand);
 
   const player1Rank = rankHand(player1Hand); // Determine the rank of player 1's hand using a separate function
   const player2Rank = rankHand(player2Hand); // Determine the rank of player 2's hand using a separate function
 
+  //console.log(player1Rank);
+  //console.log(player2Rank);
   if (player1Rank > player2Rank) {
     return player1;
   } else if (player2Rank > player1Rank) {
@@ -107,7 +111,14 @@ export function determineWinner(player1, player2, communityCards) {
 }
 
 function rankHand(cards) {
+  //console.log(cards);
   const sortedCards = sortCardsByRank(cards);
+
+  //console.log(sortedCards);
+
+  if(isFlush(sortedCards)){
+    console.log("FLUSH");
+  }
 
   if (isRoyalFlush(sortedCards)) {
     return 10;
@@ -134,10 +145,13 @@ function rankHand(cards) {
 
 function sortCardsByRank(cards) {
   return cards.sort((a, b) => {
-    const rankOrder = {Ace: 1, Two: 2, Three: 3, Four: 4, Five: 5, Six: 6, Seven: 7, Eight: 8, Nine: 9, Ten: 10, Jack: 11, Queen: 12, King: 13};
-    return rankOrder[a.rank] - rankOrder[b.rank];
+    //"1" is first character of 10, so assign it a weight of 9. A is defined as 13, 1 is not needed. 
+    const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+    return rankOrder[a[0]] - rankOrder[b[0]];
   });
 }
+
+//////////////////////////////////////////////////////////////////////////////////
 
 function isPair(cards) {
   for (let i = 0; i < cards.length - 1; i++) {
@@ -168,23 +182,56 @@ function isThreeOfAKind(cards) {
   return false;
 }
 
+//Not working
 function isStraight(cards) {
-  // Check for the special case of A-5-4-3-2, which is a valid straight
-  if (cards[0].rank === 'Ace' && cards[1].rank === 'Five' && cards[2].rank === 'Four' && cards[3].rank === 'Three' && cards[4].rank === 'Two') {
-    return true;
-  }
+  // // Check for the special case of A-5-4-3-2, which is a valid straight
+  // if (cards[0][0] === 'A' && cards[1][0] === 'Five' && cards[2][0]] === 'Four' && cards[3][0] === 'Three' && cards[4][0] === 'Two') {
+  //   return true;
+  // }
 
-  for (let i = 0; i < cards.length - 1; i++) {
-    if (cards[i].rank !== cards[i + 1].rank - 1) {
-      return false;
-    }
-  }
-  return true;
+  // for (let i = 0; i < cards.length - 1; i++) {
+  //   if (cards[i].rank !== cards[i + 1].rank - 1) {
+  //     return false;
+  //   }
+  // }
+  // return true;
+  // To check for a straight
+  // Iterate through hand from top rank to low rank, looking for 5 in a row. Duplicates will be handled in the next iteration of loop anyways.
+  // Also need to add one final check for A-2-3-4-5 straight which will wrap around the array.
+  // var straightCount = 0;
+  // const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  // for(var i = 6; i > 4; i--){
+  //   var startCard = cards[i][0];
+  //   for(var j = 1; j < 5; j++){
+  //     if((rankOrder[startCard] - j) == cards[i - j][1]){
+  //       straightCount++;
+  //     } else {
+  //       break; 
+  //     }
+  //     if(straightCount == 5){ return true; }
+  //   }
+  //   straightCount = 0;
+  // } //Check for A-2-3-4-5 condition
+  // if()
+  // return false;
 }
 
+
+//Working
 function isFlush(cards) {
-  const suits = cards.map(card => card.suit);
-  return suits.every(suit => suit === suits[0]);
+  // To check for a flush
+  // Iterate through hand from top rank to low rank, looking for 5 of same suit. 
+  // No need to check 4th card, as there isn't enough for a flush anyways
+var flushCount = 0;
+  for(var i = 6; i > 4; i--){
+    var curSuit = cards[i][1];
+    for(var j = i; j > 0; j--){
+      if(curSuit == cards[j][1]){ flushCount++;}
+      if(flushCount == 5){ return true; }
+    }
+    flushCount = 0;
+  }
+  return false;
 }
 
 function isFullHouse(cards) {

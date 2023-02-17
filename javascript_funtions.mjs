@@ -121,7 +121,7 @@ function rankHand(cards) {
   // console.log(cards);
   const sortedCards = sortCardsByRank(cards);
 
-  // console.log(sortedCards);
+  console.log(sortedCards);
 
   if(isStraight(sortedCards)){
     console.log("STRAIGHT");
@@ -243,24 +243,15 @@ function isStraight(cards) {
     UniqueRanks[i] = rankOrder[UniqueRanks[i]]
   }
 
-  // console.log(UniqueRanks)
-
   // Check for the special case of A-5-4-3-2, which is a valid straight
   if (UniqueRanks.includes('13') && UniqueRanks.includes('4') && UniqueRanks.includes('3') && UniqueRanks.includes('2') && UniqueRanks.includes('1')) {
     straightBool = true;
   }
 
-  // console.log(straightBool)
-
-  // console.log("check low")
-
 
   // Check for low straights 
   if(straightBool == false){
     for (let i = 0; i < 4; i++) {
-      // console.log(UniqueRanks[i])
-      // console.log(UniqueRanks[i+1])
-      // console.log("------------------------")
       if (UniqueRanks[i] == UniqueRanks[i+1] - 1) {
         straightBool = true;
       } 
@@ -271,17 +262,10 @@ function isStraight(cards) {
     }
   }
 
-  // console.log(straightBool)
-
-  // console.log("check HIGH")
-
   // Check for high straights
   if(straightBool == false){
 
     for (let i = UniqueRanks.length-1; i > UniqueRanks.length-5; i--) {
-      // console.log(UniqueRanks[i])
-      // console.log(UniqueRanks[i-1])
-      // console.log("------------------------")
       if (UniqueRanks[i] == UniqueRanks[i-1] + 1) {
         straightBool = true;
       } 
@@ -292,8 +276,18 @@ function isStraight(cards) {
     }
   }
 
-  // console.log(straightBool)
-
+  // Check for middle straights 
+  if(straightBool == false){
+    for (let i = 1; i < 5; i++) {
+      if (UniqueRanks[i] == UniqueRanks[i+1] - 1) {
+        straightBool = true;
+      } 
+      else{
+        straightBool = false;
+        break;
+      }
+    }
+  }
 
   if(straightBool == true){
     return true;

@@ -88,8 +88,8 @@ export function determineWinner(player1, player2, communityCards) {
   const player1Rank = rankHand(player1Hand); // Determine the rank of player 1's hand using a separate function
   const player2Rank = rankHand(player2Hand); // Determine the rank of player 2's hand using a separate function
 
-  //console.log(player1Rank);
-  //console.log(player2Rank);
+  console.log(player1Rank);
+  console.log(player2Rank);
   if (player1Rank > player2Rank) {
     return player1;
   } else if (player2Rank > player1Rank) {
@@ -121,25 +121,29 @@ function rankHand(cards) {
   // console.log(cards);
   const sortedCards = sortCardsByRank(cards);
 
-  console.log(sortedCards);
+  // console.log(sortedCards);
 
-  if(isStraight(sortedCards)){
-    console.log("STRAIGHT");
-  }
+  // if(isStraight(sortedCards)){
+  //   console.log("STRAIGHT");
+  // }
 
-  if(isFlush(sortedCards)){
-    console.log("FLUSH");
-  }
+  // if(isFlush(sortedCards)){
+  //   console.log("FLUSH");
+  // }
 
-  if(isStraightFlush(sortedCards)){
-    console.log("STRAIGHT FLUSH");
+  // if(isStraightFlush(sortedCards)){
+  //   console.log("STRAIGHT FLUSH");
+  // }
+
+  if(isFourOfAKind(sortedCards)){
+    console.log("QUADS");
   }
 
   if (isRoyalFlush(sortedCards)) {
     return 10;
   } else if (isStraightFlush(sortedCards)) {
     return 9;
-  } else if (isFourOfAKind(sortedCards)) {          // Check
+  } else if (isFourOfAKind(sortedCards)) {          // Working
     return 8;
   } else if (isFullHouse(sortedCards)) {            // Check
     return 7;
@@ -178,9 +182,25 @@ function isStraightFlush(cards) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Working
+// need to check for high card
 function isFourOfAKind(cards) {
-  for (let i = 0; i < cards.length - 3; i++) {
-    if (cards[i].rank === cards[i + 1].rank && cards[i + 1].rank === cards[i + 2].rank && cards[i + 2].rank === cards[i + 3].rank) {
+
+  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = []
+  // get ranks for each card
+  for(var i = 0; i < cards.length; i++){
+    CardRanks[i] = cards[i][0];
+  }
+
+  // assign weights for each card value
+  for(let i = 0; i < CardRanks.length; i++){
+    CardRanks[i] = rankOrder[CardRanks[i]]
+  }
+
+  //need 4 iterations of loop to check 7 card slots
+  for (let i = 0; i < 4; i++) {
+    if (CardRanks[i] === CardRanks[i + 1] && CardRanks[i + 1] === CardRanks[i + 2] && CardRanks[i + 2] === CardRanks[i + 3]) {
       return true;
     }
   }
@@ -216,7 +236,6 @@ var flushCount = 0;
 
 // Working
 // need to check for high card
-// To check for a straight
 function isStraight(cards) {
   
   let straightBool = false;

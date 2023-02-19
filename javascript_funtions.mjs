@@ -88,8 +88,8 @@ export function determineWinner(player1, player2, communityCards) {
   const player1Rank = rankHand(player1Hand); // Determine the rank of player 1's hand using a separate function
   const player2Rank = rankHand(player2Hand); // Determine the rank of player 2's hand using a separate function
 
-  console.log(player1Rank);
-  console.log(player2Rank);
+  // console.log(player1Rank);
+  // console.log(player2Rank);
   if (player1Rank > player2Rank) {
     return player1;
   } else if (player2Rank > player1Rank) {
@@ -135,9 +135,21 @@ function rankHand(cards) {
   //   console.log("STRAIGHT FLUSH");
   // }
 
-  if(isFourOfAKind(sortedCards)){
-    console.log("QUADS");
-  }
+  // if(isFourOfAKind(sortedCards)){
+  //   console.log("QUADS");
+  // }
+
+  // if(isThreeOfAKind(sortedCards)){
+  //   console.log("3oak");
+  // }
+
+  // if(isTwoPair(sortedCards)){
+  //   console.log("2 pair");
+  // }
+
+  // if(isPair(sortedCards)){
+  //   console.log("pair");
+  // }
 
   if (isRoyalFlush(sortedCards)) {
     return 10;
@@ -145,17 +157,17 @@ function rankHand(cards) {
     return 9;
   } else if (isFourOfAKind(sortedCards)) {          // Working
     return 8;
-  } else if (isFullHouse(sortedCards)) {            // Check
+  } else if (isFullHouse(sortedCards)) {            // Working
     return 7;
   } else if (isFlush(sortedCards)) {                // Working
     return 6;
   } else if (isStraight(sortedCards)) {             // Working
     return 5;
-  } else if (isThreeOfAKind(sortedCards)) {         // Check
+  } else if (isThreeOfAKind(sortedCards)) {         // Working
     return 4;
-  } else if (isTwoPair(sortedCards)) {              // Check
+  } else if (isTwoPair(sortedCards)) {              // Working
     return 3;
-  } else if (isPair(sortedCards)) {                 // Check
+  } else if (isPair(sortedCards)) {                 // Working
     return 2;
   } else {
     return 1;
@@ -165,17 +177,20 @@ function rankHand(cards) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function getHighCard(cards) {
-  return sortCardsByRank(cards)[4].rank;
+  console.log(sortCardsByRank(cards)[cards.length-1][0])
+  return sortCardsByRank(cards)[cards.length-1][0];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// Working
 function isRoyalFlush(cards) {
   return isStraightFlush(cards) && cards[0].rank === 'Ten' && cards[4].rank === 'Ace';
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Working
+// need to check for higher quads
 function isStraightFlush(cards) {
   return isFlush(cards) && isStraight(cards);
 }
@@ -183,19 +198,16 @@ function isStraightFlush(cards) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Working
-// need to check for high card
+// need to check for higher quads
 function isFourOfAKind(cards) {
 
   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
   var CardRanks = []
   // get ranks for each card
+  // assign weights for each card value
   for(var i = 0; i < cards.length; i++){
     CardRanks[i] = cards[i][0];
-  }
-
-  // assign weights for each card value
-  for(let i = 0; i < CardRanks.length; i++){
-    CardRanks[i] = rankOrder[CardRanks[i]]
+    CardRanks[i] = rankOrder[CardRanks[i]];
   }
 
   //need 4 iterations of loop to check 7 card slots
@@ -207,9 +219,10 @@ function isFourOfAKind(cards) {
   return false;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// Working
+// need to check for higher full house
 function isFullHouse(cards) {
-  return isThreeOfAKind(cards) && isPair(cards);
+  return isThreeOfAKind(cards) && isTwoPair(cards);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -243,8 +256,11 @@ function isStraight(cards) {
   var CardRanks = [];
 
   // get ranks for each card
+  // assign weights for each card value
+
   for(var i = 0; i < cards.length; i++){
     CardRanks[i] = cards[i][0];
+    CardRanks[i] = rankOrder[CardRanks[i]];
   }
 
   // function to get unique card ranks from array
@@ -257,10 +273,6 @@ function isStraight(cards) {
     return false;
   }
 
-  // assign weights for each card value
-  for(let i = 0; i < UniqueRanks.length; i++){
-    UniqueRanks[i] = rankOrder[UniqueRanks[i]]
-  }
 
   // Check for the special case of A-5-4-3-2, which is a valid straight
   if (UniqueRanks.includes('13') && UniqueRanks.includes('4') && UniqueRanks.includes('3') && UniqueRanks.includes('2') && UniqueRanks.includes('1')) {
@@ -317,22 +329,47 @@ function isStraight(cards) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Working
+// need to check for high card
 
 function isThreeOfAKind(cards) {
-  for (let i = 0; i < cards.length - 2; i++) {
-    if (cards[i].rank === cards[i + 1].rank && cards[i + 1].rank === cards[i + 2].rank) {
+
+  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = []
+  // get ranks for each card
+  // assign weights for each card value
+  for(var i = 0; i < cards.length; i++){
+    CardRanks[i] = cards[i][0];
+    CardRanks[i] = rankOrder[CardRanks[i]];
+  }
+
+  //need 5 iterations of loop to check 7 card slots
+  for (let i = 0; i < 5; i++) {
+    if (CardRanks[i] === CardRanks[i + 1] && CardRanks[i + 1] === CardRanks[i + 2] ) {
       return true;
     }
   }
+
   return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Working
+// need to check for high card
 
 function isTwoPair(cards) {
   let pairs = 0;
+  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = []
+  // get ranks for each card
+  // assign weights for each card value
+  for(var i = 0; i < cards.length; i++){
+    CardRanks[i] = cards[i][0];
+    CardRanks[i] = rankOrder[CardRanks[i]];
+  }
+
   for (let i = 0; i < cards.length - 1; i++) {
-    if (cards[i].rank === cards[i + 1].rank) {
+    if (CardRanks[i] === CardRanks[i + 1] ) {
       pairs++;
       i++;
     }
@@ -341,10 +378,22 @@ function isTwoPair(cards) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Working
+// need to check for high card
 
 function isPair(cards) {
-  for (let i = 0; i < cards.length - 1; i++) {
-    if (cards[i].rank === cards[i + 1].rank) {
+  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = []
+  // get ranks for each card
+  // assign weights for each card value
+  for(var i = 0; i < cards.length; i++){
+    CardRanks[i] = cards[i][0];
+    CardRanks[i] = rankOrder[CardRanks[i]];
+  }
+
+  //need 6 iterations of loop to check 7 card slots
+  for (let i = 0; i < 6; i++) {
+    if (CardRanks[i] === CardRanks[i + 1] ) {
       return true;
     }
   }

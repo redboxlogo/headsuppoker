@@ -5,22 +5,32 @@ const deck = functions.createDeck();                    // This will return an a
 
 var shuffledDeck = functions.shuffleDeck(deck);         // This will shuffle the deck randomly
 
-const player1 = functions.createPlayer('Player 1');     // This will create a player object with an empty `cards` array
-const player2 = functions.createPlayer('Player 2');     // This will create a player object with an empty `cards` array
+const player1 = functions.getBuyIns("player 1", 10000);                  // This will create a player object with an empty `cards` array
+const player2 = functions.getBuyIns("player 2", 10000);                  // This will create a player object with an empty `cards` array
 
 functions.dealHands(deck, player1, player2);            // Deal 4 cards from the deck, alternating between the two players
                                                         //player1 is small blind; player 2 is big blind
 console.log(player1);                                   // Outputs the small blind player object in the console, with 2 cards in its `cards` array
 console.log(player2);                                   // Outputs the big blind player object in the console, with 2 cards in its `cards` array
 
-const commCards = functions.genCommArray();
+
+
+const commCards = functions.genTable();
+functions.placeBet(player1,commCards);
+functions.placeBet(player2,commCards);
 console.log(commCards);
-functions.dealFlop(shuffledDeck, commCards);
+functions.dealFlop(shuffledDeck, commCards.cards);
 console.log(commCards);
-functions.dealTurn(shuffledDeck, commCards);
+functions.placeBet(player1,commCards);
+functions.placeBet(player2,commCards);
+functions.dealTurn(shuffledDeck, commCards.cards);
 console.log(commCards);
-functions.dealRiver(shuffledDeck, commCards);
+functions.placeBet(player1,commCards);
+functions.placeBet(player2,commCards);
+functions.dealRiver(shuffledDeck, commCards.cards);
 console.log(commCards);
+functions.placeBet(player1,commCards);
+functions.placeBet(player2,commCards);
 
 //TEST FOR SPECIAL CASE STRAIGHT
 

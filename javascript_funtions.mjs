@@ -26,13 +26,35 @@ export function shuffleDeck(deck) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function createPlayer(name) {
+function createPlayer(name, buyin) {
   const player = {
     name: name,
-    cards: []
+    cards: [],
+    chipCount: buyin,
   };
 
   return player;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// may need to pass MAXBUYIN or MINBUYIN argument to ensure player does not exceed max/min buy in
+// "prompt()" only available in browser commands, may need in future
+
+// const playerName = prompt(`Enter player's name:`);
+// let buyIn = parseFloat(prompt(`Enter ${playerName}'s buy-in amount:`));
+
+// // Validate input
+// while (isNaN(buyIn) || buyIn <= 0) {
+//   buyIn = parseFloat(prompt(`Invalid input. Enter a valid buy-in amount for ${playerName}:`));
+// }
+
+export function getBuyIns(playername, buyin) {
+
+  const Player = createPlayer(playername, buyin)
+
+  return Player;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,35 +95,75 @@ export function dealRiver(deck, commCards){
   return;
 }
 
-export function genCommArray(){
-  return new Array(5);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function placeBet(player, commCards) {
+  // const bet = prompt(`Enter bet amount for ${player.name}: `);
+
+  console.log("place your bet")
+  //hard coded for testing
+  const bet = 100
+  const parsedBet = parseFloat(bet);
+
+  if (isNaN(parsedBet) || parsedBet <= 0) {
+    console.log(`Invalid bet amount.`);
+    return false;
+  }
+
+  if (parsedBet > player.chipCount) {
+    console.log(`Bet amount exceeds chip count.`);
+    return false;
+  }
+
+  player.chipCount -= parsedBet;
+  console.log(`${player.name} bets ${parsedBet}.`);
+  commCards.pot += parsedBet;
+  return bet;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export function genTable(){
+  const table ={
+    cards: new Array(5),
+    pot: 0
+  };
+  return table;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function determineWinner(player1, player2, communityCards) {
-  const player1Hand = player1.cards.concat(communityCards); // Concatenate the player's two cards with the community cards
-  const player2Hand = player2.cards.concat(communityCards); // Concatenate the player's two cards with the community cards
-  //console.log(player1Hand);
-  //console.log(player2Hand);
+  const Cards = communityCards.cards
+  const player1Hand = player1.cards.concat(Cards); // Concatenate the player's two cards with the community cards
+  const player2Hand = player2.cards.concat(Cards); // Concatenate the player's two cards with the community cards
 
   const player1Rank = rankHand(player1Hand); // Determine the rank of player 1's hand using a separate function
   const player2Rank = rankHand(player2Hand); // Determine the rank of player 2's hand using a separate function
 
-  // console.log(player1Rank);
-  // console.log(player2Rank);
   if (player1Rank > player2Rank) {
+    player1.chipCount += communityCards.pot
     return player1;
   } else if (player2Rank > player1Rank) {
+    player2.chipCount += communityCards.pot
     return player2;
   } else {
+
+    // TODO:
+    // need to differentiate if a player has a better rank of the same hand
+    // i.e pair of 5 is better than pair 3, but our function cant see that 
+
+
+
     // If the two hands have the same rank, compare the high cards
     const player1HighCard = getHighCard(player1Hand);
     const player2HighCard = getHighCard(player2Hand);
 
     if (player1HighCard > player2HighCard) {
+      player1.chipCount += communityCards.pot
       return player1;
     } else if (player2HighCard > player1HighCard) {
+      player2.chipCount += communityCards.pot
       return player2;
     } else {
       return null; // The game is a tie
@@ -176,6 +238,7 @@ function rankHand(cards) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Not Working
 function getHighCard(cards) {
   console.log(sortCardsByRank(cards)[cards.length-1][0])
   return sortCardsByRank(cards)[cards.length-1][0];
@@ -190,7 +253,7 @@ function isRoyalFlush(cards) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Working
-// need to check for higher quads
+// need to check for higher quads (do in determineWinner()? )
 function isStraightFlush(cards) {
   return isFlush(cards) && isStraight(cards);
 }
@@ -198,7 +261,7 @@ function isStraightFlush(cards) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Working
-// need to check for higher quads
+// need to check for higher quads (do in determineWinner()? )
 function isFourOfAKind(cards) {
 
   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
@@ -220,7 +283,7 @@ function isFourOfAKind(cards) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Working
-// need to check for higher full house
+// need to check for higher full house (do in determineWinner()? )
 function isFullHouse(cards) {
   return isThreeOfAKind(cards) && isTwoPair(cards);
 }
@@ -228,7 +291,7 @@ function isFullHouse(cards) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Working
-// need to check for high card
+// need to check for high card (do in determineWinner()? )
 function isFlush(cards) {
   // To check for a flush
   // Iterate through hand from top rank to low rank, looking for 5 of same suit. 
@@ -248,7 +311,7 @@ var flushCount = 0;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Working
-// need to check for high card
+// need to check for high card (do in determineWinner()? )
 function isStraight(cards) {
   
   let straightBool = false;
@@ -330,7 +393,7 @@ function isStraight(cards) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Working
-// need to check for high card
+// need to check for high card (do in determineWinner()? )
 
 function isThreeOfAKind(cards) {
 
@@ -355,7 +418,7 @@ function isThreeOfAKind(cards) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Working
-// need to check for high card
+// need to check for high card (do in determineWinner()? )
 
 function isTwoPair(cards) {
   let pairs = 0;
@@ -379,7 +442,7 @@ function isTwoPair(cards) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Working
-// need to check for high card
+// need to check for high card (do in determineWinner()? )
 
 function isPair(cards) {
   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
@@ -399,7 +462,6 @@ function isPair(cards) {
   }
   return false;
 }
-
 
 /*export function playGame(){
   const commCards[5];

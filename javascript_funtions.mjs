@@ -159,6 +159,8 @@ export function determineWinner(player1, player2, communityCards) {
     const player1HighCard = getHighCard(player1Hand);
     const player2HighCard = getHighCard(player2Hand);
 
+    // determine best 5 card hand here
+
     if (player1HighCard > player2HighCard) {
       player1.chipCount += communityCards.pot
       return player1;
@@ -213,9 +215,9 @@ function rankHand(cards) {
   //   console.log("pair");
   // }
 
-  if (isRoyalFlush(sortedCards)) {
+  if (isRoyalFlush(sortedCards)) {                  // not working
     return 10;
-  } else if (isStraightFlush(sortedCards)) {
+  } else if (isStraightFlush(sortedCards)) {        // Working
     return 9;
   } else if (isFourOfAKind(sortedCards)) {          // Working
     return 8;
@@ -245,7 +247,7 @@ function getHighCard(cards) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Working
+// not Working
 function isRoyalFlush(cards) {
   return isStraightFlush(cards) && cards[0].rank === 'Ten' && cards[4].rank === 'Ace';
 }

@@ -317,6 +317,9 @@ var highCard = 0;
       for(i = 0; i < player.sortedHand.length; i++){
         if((getRank(player.sortedHand[i]) > highCard) && (player.sortedHand[i][1] == curSuit)){
           //If we have a new higher card that's of the flush suit, push all cards down a slot and put this high card at the top
+          
+          // why not use shift()?
+          
           highCard = getRank(player.sortedHand[i]);
           player.winningHand[0] = player.winningHand[1];
           player.winningHand[1] = player.winningHand[2];
@@ -508,11 +511,18 @@ function isPair(player) {
       break;
     }
   }
-  player.winningHand[4] = player.sortedHand[6]; //Fill winning Hand array with top 5-ranked cards.
-  player.winningHand[3] = player.sortedHand[5];
-  player.winningHand[2] = player.sortedHand[4];
-  player.winningHand[1] = player.sortedHand[3];
-  player.winningHand[0] = player.sortedHand[2];
+
+
+  //Fill winning Hand array with top 5-ranked cards.
+  for( let i = 0; i < 5; i++){
+    player.winningHand[i] = player.sortedHand[i+2]
+  }
+
+  // player.winningHand[4] = player.sortedHand[6]; 
+  // player.winningHand[3] = player.sortedHand[5];
+  // player.winningHand[2] = player.sortedHand[4];
+  // player.winningHand[1] = player.sortedHand[3];
+  // player.winningHand[0] = player.sortedHand[2];
 
   //Now ensure pair is inside winningHand, else insert them.
   if((player.winningHand.indexOf(firstCard) == -1) || (player.winningHand.indexOf(secondCard) == -1)){ 

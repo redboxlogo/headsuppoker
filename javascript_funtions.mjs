@@ -29,8 +29,16 @@ export function shuffleDeck(deck) {
 function createPlayer(name, buyin) {
   const player = {
     name: name,
-    cards: [],
+    hand: [],
     chipCount: buyin,
+    fullHand: [],
+    sortedHand: [],
+    winningHand: [0, 0, 0, 0, 0],
+    isFlush: 0,
+    isStraight: 0,
+    isPair: 0,
+    is3oak: 0,
+    isTwoPair: 0,
   };
 
   return player;
@@ -66,7 +74,7 @@ export function dealHands(deck, smallBlind, bigBlind) {
   for (let i = 0; i < 4; i++) {
     const card = deck.shift(); // Remove the top card from the deck
 
-    players[currentPlayerIndex].cards.push(card); // Add the card to the current player's hand
+    players[currentPlayerIndex].hand.push(card); // Add the card to the current player's hand
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length; // Switch to the next player in the array
   }
 
@@ -131,21 +139,34 @@ export function genTable(){
   return table;
 }
 
+export function testPass(player){
+  player.chipCount = 1;
+  return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function determineWinner(player1, player2, communityCards) {
-  const Cards = communityCards.cards
-  const player1Hand = player1.cards.concat(Cards); // Concatenate the player's two cards with the community cards
-  const player2Hand = player2.cards.concat(Cards); // Concatenate the player's two cards with the community cards
+  //const Cards = communityCards.cards
+  //const player1Hand = player1.cards.concat(Cards); // Concatenate the player's two cards with the community cards
+  //const player2Hand = player2.cards.concat(Cards); // Concatenate the player's two cards with the community cards
 
-  const player1Rank = rankHand(player1Hand); // Determine the rank of player 1's hand using a separate function
-  const player2Rank = rankHand(player2Hand); // Determine the rank of player 2's hand using a separate function
+  player1.fullHand = player1.hand.concat(communityCards.cards);
+  player2.fullHand = player2.hand.concat(communityCards.cards);
+
+  //const player1Rank = rankHand(player1Hand); // Determine the rank of player 1's hand using a separate function
+  const player1Rank = rankHand(player1); // Determine the rank of player 1's hand using a separate function
+  //const player2Rank = rankHand(player2Hand); // Determine the rank of player 2's hand using a separate function
+  //const player2Rank = rankHand(player2);
+
+  console.log(player1);
+  // console.log(player2);
 
   if (player1Rank > player2Rank) {
-    player1.chipCount += communityCards.pot
+    player1.chipCount += communityCards.pot;
     return player1;
   } else if (player2Rank > player1Rank) {
-    player2.chipCount += communityCards.pot
+    player2.chipCount += communityCards.pot;
     return player2;
   } else {
 
@@ -181,57 +202,29 @@ function sortCardsByRank(cards) {
   });
 }
 
-function rankHand(cards) {
-  // console.log(cards);
-  const sortedCards = sortCardsByRank(cards);
+function rankHand(player) {
+  //console.log("Cards " + cards);
+  console.log(player.fullHand);
+  player.sortedHand = sortCardsByRank(player.fullHand);
+  console.log(player.sortedHand);
 
-  // console.log(sortedCards);
-
-  // if(isStraight(sortedCards)){
-  //   console.log("STRAIGHT");
-  // }
-
-  // if(isFlush(sortedCards)){
-  //   console.log("FLUSH");
-  // }
-
-  // if(isStraightFlush(sortedCards)){
-  //   console.log("STRAIGHT FLUSH");
-  // }
-
-  // if(isFourOfAKind(sortedCards)){
-  //   console.log("QUADS");
-  // }
-
-  // if(isThreeOfAKind(sortedCards)){
-  //   console.log("3oak");
-  // }
-
-  // if(isTwoPair(sortedCards)){
-  //   console.log("2 pair");
-  // }
-
-  // if(isPair(sortedCards)){
-  //   console.log("pair");
-  // }
-
-  if (isRoyalFlush(sortedCards)) {                  // not working
+  if (isRoyalFlush(player)) {                  // not working
     return 10;
-  } else if (isStraightFlush(sortedCards)) {        // Working
+  } else if (isStraightFlush(player)) {        // Working
     return 9;
-  } else if (isFourOfAKind(sortedCards)) {          // Working
+  } else if (isFourOfAKind(player)) {          // Working
     return 8;
-  } else if (isFullHouse(sortedCards)) {            // Working
+  } else if (isFullHouse(player)) {            // Working
     return 7;
-  } else if (isFlush(sortedCards)) {                // Working
+  } else if (isFlush(player)) {                // Working
     return 6;
-  } else if (isStraight(sortedCards)) {             // Working
+  } else if (isStraight(player)) {             // Working
     return 5;
-  } else if (isThreeOfAKind(sortedCards)) {         // Working
+  } else if (isThreeOfAKind(player)) {         // Working
     return 4;
-  } else if (isTwoPair(sortedCards)) {              // Working
+  } else if (isTwoPair(player)) {              // Working
     return 3;
-  } else if (isPair(sortedCards)) {                 // Working
+  } else if (isPair(player)) {                 // Working
     return 2;
   } else {
     return 1;
@@ -242,36 +235,47 @@ function rankHand(cards) {
 
 // Not Working
 function getHighCard(cards) {
-  console.log(sortCardsByRank(cards)[cards.length-1][0])
+  //console.log(sortCardsByRank(cards)[cards.length-1][0])
   return sortCardsByRank(cards)[cards.length-1][0];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // not Working
-function isRoyalFlush(cards) {
-  return isStraightFlush(cards) && cards[0].rank === 'Ten' && cards[4].rank === 'Ace';
+function isRoyalFlush(player) {
+  console.log("Checking Royal Flush...");
+  return (player.isFlush && player.winningHand[0][0] == 10 && player.winningHand[4][0] == A);
+  //return isStraightFlush(cards) && cards[0].rank === 'Ten' && cards[4].rank === 'Ace';
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Working
+// need to check for higher quads (do in determineWinner()? )modify or
+function isStraightFlush(player) {
+  console.log("Checking Straight Flush...");
+  if(player.isFlush && player.isStraight){
+    //verifyStraightFlush(player); //Need to ensure straightFlush is returned. 
+    // Edge case is if there is a 6-card flush, and straight consists of lower 5 cards. isFlush() will return high 5 cards which
+    // will not include the straight. There will be a separate function to handle this edge case. I'm sure there will be more
+    // edge cases as well. 
+  }
+  return (player.isFlush && player.isStraight);
+  //return isFlush(cards) && isStraight(cards);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Working
 // need to check for higher quads (do in determineWinner()? )
-function isStraightFlush(cards) {
-  return isFlush(cards) && isStraight(cards);
-}
+function isFourOfAKind(player) {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Working
-// need to check for higher quads (do in determineWinner()? )
-function isFourOfAKind(cards) {
-
-  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
-  var CardRanks = []
+  console.log("Checking 4 Of A Kind...");
+   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = [];
   // get ranks for each card
   // assign weights for each card value
-  for(var i = 0; i < cards.length; i++){
-    CardRanks[i] = cards[i][0];
+  for(var i = 0; i < player.sortedHand.length; i++){
+    CardRanks[i] = player.sortedHand[i][0];
     CardRanks[i] = rankOrder[CardRanks[i]];
   }
 
@@ -286,24 +290,42 @@ function isFourOfAKind(cards) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Working
 // need to check for higher full house (do in determineWinner()? )
-function isFullHouse(cards) {
-  return isThreeOfAKind(cards) && isTwoPair(cards);
+function isFullHouse(player) {
+  console.log("Checking Full House...");
+  return (player.isThreeOfAKind && player.isTwoPair);
+  //return isThreeOfAKind(cards) && isTwoPair(cards);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Working
 // need to check for high card (do in determineWinner()? )
-function isFlush(cards) {
+function isFlush(player) {
+  console.log("Checking Flush...");
   // To check for a flush
   // Iterate through hand from top rank to low rank, looking for 5 of same suit. 
   // No need to check 4th card, as there isn't enough for a flush anyways
 var flushCount = 0;
+var highCard = 0;
   for(var i = 6; i > 4; i--){
-    var curSuit = cards[i][1];
+    var curSuit = player.sortedHand[i][1];
     for(var j = i; j > 0; j--){
-      if(curSuit == cards[j][1]){ flushCount++;}
-      if(flushCount == 5){ return true; }
+      if(curSuit == player.sortedHand[j][1]){ flushCount++;}
+    }
+    if(flushCount >= 5){ //We have a flush. Determine best flush and set it in player.winningHand before returning true
+      for(i = 0; i < player.sortedHand.length; i++){
+        if((getRank(player.sortedHand[i]) > highCard) && (player.sortedHand[i][1] == curSuit)){
+          //If we have a new higher card that's of the flush suit, push all cards down a slot and put this high card at the top
+          highCard = getRank(player.sortedHand[i]);
+          player.winningHand[0] = player.winningHand[1];
+          player.winningHand[1] = player.winningHand[2];
+          player.winningHand[2] = player.winningHand[3];
+          player.winningHand[3] = player.winningHand[4];
+          player.winningHand[4] = player.sortedHand[i];
+        }
+      }
+      player.isFlush = 1;
+      return true; 
     }
     flushCount = 0;
   }
@@ -315,7 +337,7 @@ var flushCount = 0;
 // Working
 // need to check for high card (do in determineWinner()? )
 function isStraight(cards) {
-  
+  console.log("Checking Straight...");
   let straightBool = false;
   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
   var CardRanks = [];
@@ -397,14 +419,14 @@ function isStraight(cards) {
 // Working
 // need to check for high card (do in determineWinner()? )
 
-function isThreeOfAKind(cards) {
-
+function isThreeOfAKind(player) {
+  console.log("Checking 3 Of A Kind...");
   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
   var CardRanks = []
   // get ranks for each card
   // assign weights for each card value
-  for(var i = 0; i < cards.length; i++){
-    CardRanks[i] = cards[i][0];
+  for(var i = 0; i < player.sortedHand.length; i++){
+    CardRanks[i] = player.sortedHand[i][0];
     CardRanks[i] = rankOrder[CardRanks[i]];
   }
 
@@ -422,18 +444,19 @@ function isThreeOfAKind(cards) {
 // Working
 // need to check for high card (do in determineWinner()? )
 
-function isTwoPair(cards) {
+function isTwoPair(player) {
+  console.log("Checking Two Pair...");
   let pairs = 0;
   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
   var CardRanks = []
   // get ranks for each card
   // assign weights for each card value
-  for(var i = 0; i < cards.length; i++){
-    CardRanks[i] = cards[i][0];
+  for(var i = 0; i < player.sortedHand.length; i++){
+    CardRanks[i] = player.sortedHand[i][0];
     CardRanks[i] = rankOrder[CardRanks[i]];
   }
 
-  for (let i = 0; i < cards.length - 1; i++) {
+  for (let i = 0; i < player.sortedHand.length - 1; i++) {
     if (CardRanks[i] === CardRanks[i + 1] ) {
       pairs++;
       i++;
@@ -446,23 +469,60 @@ function isTwoPair(cards) {
 // Working
 // need to check for high card (do in determineWinner()? )
 
-function isPair(cards) {
+function isPair(player) {
+  console.log("Checking Pair...");
   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
-  var CardRanks = []
+  var CardRanks = [];
+  var pairFlag = 0;
+  var pairRank = 0;
+  var firstCard;
+  var secondCard;
   // get ranks for each card
   // assign weights for each card value
-  for(var i = 0; i < cards.length; i++){
-    CardRanks[i] = cards[i][0];
+  for(var i = 0; i < player.sortedHand.length; i++){
+    CardRanks[i] = player.sortedHand[i][0];
     CardRanks[i] = rankOrder[CardRanks[i]];
   }
 
   //need 6 iterations of loop to check 7 card slots
   for (let i = 0; i < 6; i++) {
     if (CardRanks[i] === CardRanks[i + 1] ) {
-      return true;
+      player.isPair = 1;
+      pairFlag = 1;
+      pairRank = CardRanks[i][0];
+      firstCard = CardRanks[i];
+      secondCard = CardRanks[i+1];
+      break;
     }
   }
-  return false;
+  player.winningHand[4] = player.sortedHand[6]; //Fill winning Hand array with top 5-ranked cards.
+  player.winningHand[3] = player.sortedHand[5];
+  player.winningHand[2] = player.sortedHand[4];
+  player.winningHand[1] = player.sortedHand[3];
+  player.winningHand[0] = player.sortedHand[2];
+
+  //Now ensure pair is inside winningHand, else insert them.
+  if((player.winningHand.indexOf(firstCard) == -1) || (player.winningHand.indexOf(secondCard) == -1)){ 
+    //One or Zero cards from pair are in winning hand...
+    for(i = 2; i < player.winningHand.length; i++){ //Iterate through winningHand to find insertion point
+      if(player.winningHand[i][0] > pairRank){ //If current point is 
+        player.winningHand.splice(i, 0, firstCard, secondCard); //Insert firstCard and secondCard into array.
+        player.winningHand.shift();
+        player.winningHand.shift();
+      }
+    }
+  }
+
+  if(pairFlag){
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function getRank(card){
+  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  return rankOrder[card[0]];
 }
 
 /*export function playGame(){

@@ -1,4 +1,4 @@
-//test script
+//test scriptpass array in javascript
 import * as functions from "./javascript_funtions.mjs";
 
 const deck = functions.createDeck();                    // This will return an array with 52 cards
@@ -16,21 +16,27 @@ console.log(player2);                                   // Outputs the big blind
 
 
 const commCards = functions.genTable();
-functions.placeBet(player1,commCards);
-functions.placeBet(player2,commCards);
-console.log(commCards);
+////functions.placeBet(player1,commCards);
+//functions.placeBet(player2,commCards);
+//console.log(commCards);
 functions.dealFlop(shuffledDeck, commCards.cards);
-console.log(commCards);
-functions.placeBet(player1,commCards);
-functions.placeBet(player2,commCards);
+//console.log(commCards);
+//functions.placeBet(player1,commCards);
+//functions.placeBet(player2,commCards);
 functions.dealTurn(shuffledDeck, commCards.cards);
-console.log(commCards);
-functions.placeBet(player1,commCards);
-functions.placeBet(player2,commCards);
+//console.log(commCards);
+//functions.placeBet(player1,commCards);
+//functions.placeBet(player2,commCards);
 functions.dealRiver(shuffledDeck, commCards.cards);
 console.log(commCards);
-functions.placeBet(player1,commCards);
-functions.placeBet(player2,commCards);
+//functions.placeBet(player1,commCards);
+//functions.placeBet(player2,commCards);
+
+/*console.log("HERE");
+console.log(player1);
+functions.testPass(player1);
+console.log(player1);*/
+
 
 //TEST FOR SPECIAL CASE STRAIGHT
 
@@ -64,7 +70,12 @@ functions.placeBet(player2,commCards);
 // const player2 = { name: 'Player 2', cards: [ '2♢', '2♡' ] };
 // var commCards = [ '2♣', 'J♡', 'K♠', 'J♣', '2♠' ];
 
+player1.hand = [ 'A♠', '5♠' ];
+player2.hand = [ '3♢', '4♡' ];
+commCards.cards = [ '6♣', 'J♠', 'K♠', 'Q♠', '7♠' ];
 
 
-var winner = functions.determineWinner(player1, player2, commCards)
-console.log(winner)
+//console.log(player1);
+var winner = functions.determineWinner(player1, player2, commCards);
+console.log(winner);
+//console.log(player1);

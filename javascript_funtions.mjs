@@ -180,8 +180,6 @@ export function determineWinner(player1, player2, communityCards) {
     const player1HighCard = getHighCard(player1Hand);
     const player2HighCard = getHighCard(player2Hand);
 
-    // determine best 5 card hand here
-
     if (player1HighCard > player2HighCard) {
       player1.chipCount += communityCards.pot
       return player1;
@@ -287,6 +285,8 @@ function isFourOfAKind(player) {
   }
   return false;
 }
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Working
 // need to check for higher full house (do in determineWinner()? )
@@ -307,6 +307,7 @@ function isFlush(player) {
   // No need to check 4th card, as there isn't enough for a flush anyways
 var flushCount = 0;
 var highCard = 0;
+
   for(var i = 6; i > 4; i--){
     var curSuit = player.sortedHand[i][1];
     for(var j = i; j > 0; j--){
@@ -336,7 +337,7 @@ var highCard = 0;
 
 // Working
 // need to check for high card (do in determineWinner()? )
-function isStraight(cards) {
+function isStraight(player) {
   console.log("Checking Straight...");
   let straightBool = false;
   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
@@ -345,8 +346,8 @@ function isStraight(cards) {
   // get ranks for each card
   // assign weights for each card value
 
-  for(var i = 0; i < cards.length; i++){
-    CardRanks[i] = cards[i][0];
+  for(var i = 0; i < player.sortedHand.length; i++){
+    CardRanks[i] = player.sortedHand[i];
     CardRanks[i] = rankOrder[CardRanks[i]];
   }
 
@@ -366,6 +367,18 @@ function isStraight(cards) {
     straightBool = true;
   }
 
+  // optimization in progress
+  // if(straightBool == false){
+  //   for (let i = 0; i < UniqueRanks.length-4; i++) {
+  //     if (UniqueRanks[i] == UniqueRanks[i+1] - 1 && UniqueRanks[i] == UniqueRanks[i+2] - 2 && UniqueRanks[i] == UniqueRanks[i+3] - 3 && UniqueRanks[i] == UniqueRanks[i+4] - 4) {
+  //       straightBool = true;
+  //     } 
+  //     else{
+  //       straightBool = false;
+  //       break;
+  //     }
+  //   }
+  // }
 
   // Check for low straights 
   if(straightBool == false){

@@ -8,7 +8,7 @@ var shuffledDeck = functions.shuffleDeck(deck);         // This will shuffle the
 const player1 = functions.getBuyIns("player 1", 10000);                  // This will create a player object with an empty `cards` array
 const player2 = functions.getBuyIns("player 2", 10000);                  // This will create a player object with an empty `cards` array
 
-functions.dealHands(deck, player1, player2);            // Deal 4 cards from the deck, alternating between the two players
+functions.dealHands(shuffledDeck, player1, player2);            // Deal 4 cards from the deck, alternating between the two players
                                                         //player1 is small blind; player 2 is big blind
 console.log(player1);                                   // Outputs the small blind player object in the console, with 2 cards in its `cards` array
 console.log(player2);                                   // Outputs the big blind player object in the console, with 2 cards in its `cards` array
@@ -16,9 +16,9 @@ console.log(player2);                                   // Outputs the big blind
 
 
 const commCards = functions.genTable();
-////functions.placeBet(player1,commCards);
+//functions.placeBet(player1,commCards);
 //functions.placeBet(player2,commCards);
-//console.log(commCards);
+// console.log(commCards);
 functions.dealFlop(shuffledDeck, commCards.cards);
 //console.log(commCards);
 //functions.placeBet(player1,commCards);
@@ -52,8 +52,8 @@ console.log(player1);*/
 
 //TEST FOR MID STRAIGHT
 
-// const player1 = { name: 'Player 1', cards: [ '2♠', '4♡' ] }
-// const player2 = { name: 'Player 2', cards: [ '8♢', '4♣' ] }
+// const player1 = { name: 'Player 1', hand: [ '2♠', '4♡' ] }
+// const player2 = { name: 'Player 2', hand: [ '8♢', '4♣' ] }
 // var commCards = [ '6♡', '5♡', 'Q♢', '2♣', '7♠' ];
 
 //TEST FOR STRAIGHT FLUSH

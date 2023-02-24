@@ -77,5 +77,6 @@ commCards.cards = [ '6♣', 'J♠', 'K♠', 'Q♠', '7♠' ];
 
 //console.log(player1);
 var winner = functions.determineWinner(player1, player2, commCards);
+console.log("%%%%%%%%%%%%%%%%%%%%%\nTEST WINNER\n%%%%%%%%%%%%%%%%%%%%% ");
 console.log(winner);
 //console.log(player1);

@@ -157,9 +157,9 @@ export function determineWinner(player1, player2, communityCards) {
   //const player1Rank = rankHand(player1Hand); // Determine the rank of player 1's hand using a separate function
   const player1Rank = rankHand(player1); // Determine the rank of player 1's hand using a separate function
   //const player2Rank = rankHand(player2Hand); // Determine the rank of player 2's hand using a separate function
-  //const player2Rank = rankHand(player2);
+  const player2Rank = rankHand(player2);
 
-  console.log(player1);
+  //console.log(player1);
   // console.log(player2);
 
   if (player1Rank > player2Rank) {

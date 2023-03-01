@@ -31,14 +31,13 @@ function createPlayer(name, buyin) {
     name: name,
     hand: [],
     chipCount: buyin,
-    fullHand: [],
     sortedHand: [],
     winningHand: [0, 0, 0, 0, 0],
-    isFlush: 0,
-    isStraight: 0,
-    isPair: 0,
-    is3oak: 0,
-    isTwoPair: 0,
+    FlushBool: 0,
+    StraightBool: 0,
+    ThreeOfaKindBool: 0,
+    TwoPairBool: 0,
+    PairBool: 0,
   };
 
   return player;
@@ -151,8 +150,8 @@ export function determineWinner(player1, player2, communityCards) {
   //const player1Hand = player1.cards.concat(Cards); // Concatenate the player's two cards with the community cards
   //const player2Hand = player2.cards.concat(Cards); // Concatenate the player's two cards with the community cards
 
-  player1.fullHand = player1.hand.concat(communityCards.cards);
-  player2.fullHand = player2.hand.concat(communityCards.cards);
+  player1.sortedHand = sortCardsByRank(player1.hand.concat(communityCards.cards));
+  player2.sortedHand = sortCardsByRank(player2.hand.concat(communityCards.cards));
 
   //const player1Rank = rankHand(player1Hand); // Determine the rank of player 1's hand using a separate function
   const player1Rank = rankHand(player1); // Determine the rank of player 1's hand using a separate function
@@ -177,8 +176,8 @@ export function determineWinner(player1, player2, communityCards) {
 
 
     // If the two hands have the same rank, compare the high cards
-    const player1HighCard = getHighCard(player1Hand);
-    const player2HighCard = getHighCard(player2Hand);
+    const player1HighCard = getHighCard(player1.hand);
+    const player2HighCard = getHighCard(player2.hand);
 
     if (player1HighCard > player2HighCard) {
       player1.chipCount += communityCards.pot
@@ -202,8 +201,6 @@ function sortCardsByRank(cards) {
 
 function rankHand(player) {
   //console.log("Cards " + cards);
-  console.log(player.fullHand);
-  player.sortedHand = sortCardsByRank(player.fullHand);
   console.log(player.sortedHand);
 
   if (isRoyalFlush(player)) {                  // not working
@@ -328,7 +325,7 @@ var highCard = 0;
           player.winningHand[4] = player.sortedHand[i];
         }
       }
-      player.isFlush = 1;
+      player.FlushBool = 1;
       return true; 
     }
     flushCount = 0;
@@ -342,7 +339,6 @@ var highCard = 0;
 // need to check for high card (do in determineWinner()? )
 function isStraight(player) {
   console.log("Checking Straight...");
-  let straightBool = false;
   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
   var CardRanks = [];
 
@@ -367,63 +363,77 @@ function isStraight(player) {
 
   // Check for the special case of A-5-4-3-2, which is a valid straight
   if (UniqueRanks.includes('13') && UniqueRanks.includes('4') && UniqueRanks.includes('3') && UniqueRanks.includes('2') && UniqueRanks.includes('1')) {
-    straightBool = true;
+    player.StraightBool = true;
+
+
+    // let index = player.sortedHand.indexOf('A'); // Get the index of the element
+    // newArray.push(removed[0]); // Add the element to the new array
+    // index = player.sortedHand.indexOf('2'); // Get the index of the element
+    // newArray.push(removed[0]); // Add the element to the new array
+    // index = player.sortedHand.indexOf('3'); // Get the index of the element
+    // newArray.push(removed[0]); // Add the element to the new array
+    // index = player.sortedHand.indexOf('4'); // Get the index of the element
+    // newArray.push(removed[0]); // Add the element to the new array
+    // index = player.sortedHand.indexOf('5'); // Get the index of the element
+    // newArray.push(removed[0]); // Add the element to the new array
+
+
   }
 
   // optimization in progress
-  // if(straightBool == false){
+  // if(player.StraightBool == false){
   //   for (let i = 0; i < UniqueRanks.length-4; i++) {
   //     if (UniqueRanks[i] == UniqueRanks[i+1] - 1 && UniqueRanks[i] == UniqueRanks[i+2] - 2 && UniqueRanks[i] == UniqueRanks[i+3] - 3 && UniqueRanks[i] == UniqueRanks[i+4] - 4) {
-  //       straightBool = true;
+  //       player.StraightBool = true;
   //     } 
   //     else{
-  //       straightBool = false;
+  //       player.StraightBool = false;
   //       break;
   //     }
   //   }
   // }
 
   // Check for low straights 
-  if(straightBool == false){
+  if(player.StraightBool == false){
     for (let i = 0; i < 4; i++) {
       if (UniqueRanks[i] == UniqueRanks[i+1] - 1) {
-        straightBool = true;
+        player.StraightBool = true;
       } 
       else{
-        straightBool = false;
+        player.StraightBool = false;
         break;
       }
     }
   }
 
   // Check for high straights
-  if(straightBool == false){
+  if(player.StraightBool == false){
 
     for (let i = UniqueRanks.length-1; i > UniqueRanks.length-5; i--) {
       if (UniqueRanks[i] == UniqueRanks[i-1] + 1) {
-        straightBool = true;
+        player.StraightBool = true;
       } 
       else{
-        straightBool = false;
+        player.StraightBool = false;
         break;
       }
     }
   }
 
   // Check for middle straights 
-  if(straightBool == false){
+  if(player.StraightBool == false){
     for (let i = 1; i < 5; i++) {
       if (UniqueRanks[i] == UniqueRanks[i+1] - 1) {
-        straightBool = true;
+        player.StraightBool = true;
       } 
       else{
-        straightBool = false;
+        player.StraightBool = false;
         break;
       }
     }
   }
 
-  if(straightBool == true){
+  if(player.StraightBool == true){
     return true;
   } else{
     return false;
@@ -503,7 +513,7 @@ function isPair(player) {
   //need 6 iterations of loop to check 7 card slots
   for (let i = 0; i < 6; i++) {
     if (CardRanks[i] === CardRanks[i + 1] ) {
-      player.isPair = 1;
+      player.PairBool = 1;
       pairFlag = 1;
       pairRank = CardRanks[i][0];
       firstCard = CardRanks[i];

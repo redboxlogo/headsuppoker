@@ -32,7 +32,9 @@ function createPlayer(name, buyin) {
     hand: [],
     chipCount: buyin,
     sortedHand: [],
-    winningHand: [0, 0, 0, 0, 0],
+    winningHand: [],
+    // winningHand: [0, 0, 0, 0, 0], // does not create a static array
+    // winningHand: new Array(5), // static array
     FlushBool: 0,
     StraightBool: 0,
     ThreeOfaKindBool: 0,
@@ -158,7 +160,7 @@ export function determineWinner(player1, player2, communityCards) {
   //const player2Rank = rankHand(player2Hand); // Determine the rank of player 2's hand using a separate function
   const player2Rank = rankHand(player2);
 
-  //console.log(player1);
+  // console.log(player1);
   // console.log(player2);
 
   if (player1Rank > player2Rank) {
@@ -346,7 +348,7 @@ function isStraight(player) {
   // assign weights for each card value
 
   for(var i = 0; i < player.sortedHand.length; i++){
-    CardRanks[i] = player.sortedHand[i];
+    CardRanks[i] = player.sortedHand[i][0];
     CardRanks[i] = rankOrder[CardRanks[i]];
   }
 
@@ -360,23 +362,29 @@ function isStraight(player) {
     return false;
   }
 
-
-  // Check for the special case of A-5-4-3-2, which is a valid straight
-  if (UniqueRanks.includes('13') && UniqueRanks.includes('4') && UniqueRanks.includes('3') && UniqueRanks.includes('2') && UniqueRanks.includes('1')) {
-    player.StraightBool = true;
-
-
-    // let index = player.sortedHand.indexOf('A'); // Get the index of the element
-    // newArray.push(removed[0]); // Add the element to the new array
-    // index = player.sortedHand.indexOf('2'); // Get the index of the element
-    // newArray.push(removed[0]); // Add the element to the new array
-    // index = player.sortedHand.indexOf('3'); // Get the index of the element
-    // newArray.push(removed[0]); // Add the element to the new array
-    // index = player.sortedHand.indexOf('4'); // Get the index of the element
-    // newArray.push(removed[0]); // Add the element to the new array
-    // index = player.sortedHand.indexOf('5'); // Get the index of the element
-    // newArray.push(removed[0]); // Add the element to the new array
-
+  // Check for the special case of A-5-4-3-2, which is a valid straight (Working)
+  if (UniqueRanks.includes(13) && UniqueRanks.includes(4) && UniqueRanks.includes(3) && UniqueRanks.includes(2) && UniqueRanks.includes(1)) {
+    player.StraightBool = 1;
+    if(CardRanks.includes(13)){
+      let index = CardRanks.indexOf(13); // Get the index of the element
+      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+    }
+    if(CardRanks.includes(1)){
+      let index = CardRanks.indexOf(1); // Get the index of the element
+      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+    }
+    if(CardRanks.includes(2)){
+      let index = CardRanks.indexOf(2); // Get the index of the element
+      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+    }
+    if(CardRanks.includes(3)){
+      let index = CardRanks.indexOf(3); // Get the index of the element
+      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+    }
+    if(CardRanks.includes(4)){
+      let index = CardRanks.indexOf(4); // Get the index of the element
+      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+    }
 
   }
 
@@ -394,46 +402,46 @@ function isStraight(player) {
   // }
 
   // Check for low straights 
-  if(player.StraightBool == false){
+  if(player.StraightBool == 0){
     for (let i = 0; i < 4; i++) {
       if (UniqueRanks[i] == UniqueRanks[i+1] - 1) {
-        player.StraightBool = true;
+        player.StraightBool = 1;
       } 
       else{
-        player.StraightBool = false;
+        player.StraightBool = 0;
         break;
       }
     }
   }
 
   // Check for high straights
-  if(player.StraightBool == false){
+  if(player.StraightBool == 0){
 
     for (let i = UniqueRanks.length-1; i > UniqueRanks.length-5; i--) {
       if (UniqueRanks[i] == UniqueRanks[i-1] + 1) {
-        player.StraightBool = true;
+        player.StraightBool = 1;
       } 
       else{
-        player.StraightBool = false;
+        player.StraightBool = 0;
         break;
       }
     }
   }
 
   // Check for middle straights 
-  if(player.StraightBool == false){
+  if(player.StraightBool == 0){
     for (let i = 1; i < 5; i++) {
       if (UniqueRanks[i] == UniqueRanks[i+1] - 1) {
-        player.StraightBool = true;
+        player.StraightBool = 1;
       } 
       else{
-        player.StraightBool = false;
+        player.StraightBool = 0;
         break;
       }
     }
   }
 
-  if(player.StraightBool == true){
+  if(player.StraightBool == 1){
     return true;
   } else{
     return false;

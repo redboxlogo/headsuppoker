@@ -29,18 +29,18 @@ export function shuffleDeck(deck) {
 function createPlayer(name, buyin) {
   const player = {
     name: name,
-    hand: [],
+    hand: new Array(2),
     chipCount: buyin,
     sortedHand: [],
-    winningHand: [],
-    // winningHand: [0, 0, 0, 0, 0], // does not create a static array
-    // winningHand: new Array(5), // static array
+    winningHand: new Array(5),
     FlushBool: 0,
     StraightBool: 0,
     ThreeOfaKindBool: 0,
     TwoPairBool: 0,
     PairBool: 0,
   };
+
+  Object.seal(player)
 
   return player;
 }
@@ -78,6 +78,7 @@ export function dealHands(deck, smallBlind, bigBlind) {
     players[currentPlayerIndex].hand.push(card); // Add the card to the current player's hand
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length; // Switch to the next player in the array
   }
+
 
   return [smallBlind, bigBlind];
 }
@@ -137,6 +138,9 @@ export function genTable(){
     cards: new Array(5),
     pot: 0
   };
+
+  Object.seal(table)
+
   return table;
 }
 
@@ -148,20 +152,14 @@ export function testPass(player){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function determineWinner(player1, player2, communityCards) {
-  //const Cards = communityCards.cards
-  //const player1Hand = player1.cards.concat(Cards); // Concatenate the player's two cards with the community cards
-  //const player2Hand = player2.cards.concat(Cards); // Concatenate the player's two cards with the community cards
 
   player1.sortedHand = sortCardsByRank(player1.hand.concat(communityCards.cards));
   player2.sortedHand = sortCardsByRank(player2.hand.concat(communityCards.cards));
 
-  //const player1Rank = rankHand(player1Hand); // Determine the rank of player 1's hand using a separate function
-  const player1Rank = rankHand(player1); // Determine the rank of player 1's hand using a separate function
-  //const player2Rank = rankHand(player2Hand); // Determine the rank of player 2's hand using a separate function
-  const player2Rank = rankHand(player2);
+  const player1Rank = rankHand(player1); // Determine the rank of player 1's hand 
+  const player2Rank = rankHand(player2); // Determine the rank of player 2's hand 
 
-  // console.log(player1);
-  // console.log(player2);
+  
 
   if (player1Rank > player2Rank) {
     player1.chipCount += communityCards.pot;

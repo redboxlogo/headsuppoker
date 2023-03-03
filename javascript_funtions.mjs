@@ -29,7 +29,7 @@ export function shuffleDeck(deck) {
 function createPlayer(name, buyin) {
   const player = {
     name: name,
-    hand: new Array(2),
+    hand: [],
     chipCount: buyin,
     sortedHand: [],
     winningHand: new Array(5),

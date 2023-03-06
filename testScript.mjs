@@ -8,7 +8,7 @@ var shuffledDeck = functions.shuffleDeck(deck);         // This will shuffle the
 const player1 = functions.getBuyIns("player 1", 10000);                  // This will create a player object with an empty `cards` array
 const player2 = functions.getBuyIns("player 2", 10000);                  // This will create a player object with an empty `cards` array
 
-functions.dealHands(shuffledDeck, player1, player2);            // Deal 4 cards from the deck, alternating between the two players
+// functions.dealHands(shuffledDeck, player1, player2);            // Deal 4 cards from the deck, alternating between the two players
                                                         //player1 is small blind; player 2 is big blind
 // console.log(player1);                                   // Outputs the small blind player object in the console, with 2 cards in its `cards` array
 // console.log(player2);                                   // Outputs the big blind player object in the console, with 2 cards in its `cards` array
@@ -16,21 +16,21 @@ functions.dealHands(shuffledDeck, player1, player2);            // Deal 4 cards 
 
 
 const commCards = functions.genTable();
-functions.placeBet(player1,commCards);
-functions.placeBet(player2,commCards);
-console.log(commCards.cards);
-functions.dealFlop(shuffledDeck, commCards.cards);
-console.log(commCards.cards);
-functions.placeBet(player1,commCards);
-functions.placeBet(player2,commCards);
-functions.dealTurn(shuffledDeck, commCards.cards);
-console.log(commCards.cards);
-functions.placeBet(player1,commCards);
-functions.placeBet(player2,commCards);
-functions.dealRiver(shuffledDeck, commCards.cards);
-console.log(commCards.cards);
-functions.placeBet(player1,commCards);
-functions.placeBet(player2,commCards);
+// functions.placeBet(player1,commCards);
+// functions.placeBet(player2,commCards);
+// console.log(commCards.cards);
+// functions.dealFlop(shuffledDeck, commCards.cards);
+// console.log(commCards.cards);
+// functions.placeBet(player1,commCards);
+// functions.placeBet(player2,commCards);
+// functions.dealTurn(shuffledDeck, commCards.cards);
+// console.log(commCards.cards);
+// functions.placeBet(player1,commCards);
+// functions.placeBet(player2,commCards);
+// functions.dealRiver(shuffledDeck, commCards.cards);
+// console.log(commCards.cards);
+// functions.placeBet(player1,commCards);
+// functions.placeBet(player2,commCards);
 
 /*console.log("HERE");
 console.log(player1);
@@ -40,9 +40,9 @@ console.log(player1);*/
 
 //TEST FOR SPECIAL CASE STRAIGHT
 
-// player1.hand = [ '9♠', '4♡' ] 
-// player2.hand = [ 'A♢', '4♣' ]
-// commCards.cards = [ '6♡', '5♡', '2♢', '3♣', '7♠' ];
+player1.hand = [ '9♠', '4♡' ] 
+player2.hand = [ 'A♢', '4♣' ]
+commCards.cards = [ '6♡', '5♡', '2♢', '3♣', '7♠' ];
 
 //TEST FOR HIGH STRAIGHT
 

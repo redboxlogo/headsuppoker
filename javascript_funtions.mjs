@@ -205,19 +205,19 @@ function rankHand(player) {
 
   if (isRoyalFlush(player)) {                  // not working
     return 10;
-  } else if (isStraightFlush(player)) {        // Working
+  } else if (isStraightFlush(player)) {        // not Working
     return 9;
-  } else if (isFourOfAKind(player)) {          // Working
+  } else if (isFourOfAKind(player)) {          // not Working
     return 8;
-  } else if (isFullHouse(player)) {            // Working
+  } else if (isFullHouse(player)) {            // not Working
     return 7;
   } else if (isFlush(player)) {                // Working
     return 6;
   } else if (isStraight(player)) {             // Working
     return 5;
-  } else if (isThreeOfAKind(player)) {         // Working
+  } else if (isThreeOfAKind(player)) {         // not Working
     return 4;
-  } else if (isTwoPair(player)) {              // Working
+  } else if (isTwoPair(player)) {              // not Working
     return 3;
   } else if (isPair(player)) {                 // Working
     return 2;
@@ -244,7 +244,7 @@ function isRoyalFlush(player) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Working
+// not Working
 // need to check for higher quads (do in determineWinner()? )modify or
 function isStraightFlush(player) {
   console.log("Checking Straight Flush...");
@@ -260,7 +260,7 @@ function isStraightFlush(player) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Working
+// not Working
 // need to check for higher quads (do in determineWinner()? )
 function isFourOfAKind(player) {
 
@@ -285,7 +285,7 @@ function isFourOfAKind(player) {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Working
+// not Working
 // need to check for higher full house (do in determineWinner()? )
 function isFullHouse(player) {
   console.log("Checking Full House...");
@@ -365,39 +365,53 @@ function isStraight(player) {
     player.StraightBool = 1;
     if(CardRanks.includes(13)){
       let index = CardRanks.indexOf(13); // Get the index of the element
-      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+      player.winningHand[0] = player.sortedHand[index]; // Add the element to the new array
     }
     if(CardRanks.includes(1)){
       let index = CardRanks.indexOf(1); // Get the index of the element
-      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+      player.winningHand[1] = player.sortedHand[index]; // Add the element to the new array
     }
     if(CardRanks.includes(2)){
       let index = CardRanks.indexOf(2); // Get the index of the element
-      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+      player.winningHand[2] = player.sortedHand[index]; // Add the element to the new array
     }
     if(CardRanks.includes(3)){
       let index = CardRanks.indexOf(3); // Get the index of the element
-      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+      player.winningHand[3] = player.sortedHand[index]; // Add the element to the new array
     }
     if(CardRanks.includes(4)){
       let index = CardRanks.indexOf(4); // Get the index of the element
-      player.winningHand.push(player.sortedHand[index]); // Add the element to the new array
+      player.winningHand[4] = player.sortedHand[index]; // Add the element to the new array
     }
-
+    player.StraightBool = true
   }
 
   // optimization in progress
-  // if(player.StraightBool == false){
-  //   for (let i = 0; i < UniqueRanks.length-4; i++) {
-  //     if (UniqueRanks[i] == UniqueRanks[i+1] - 1 && UniqueRanks[i] == UniqueRanks[i+2] - 2 && UniqueRanks[i] == UniqueRanks[i+3] - 3 && UniqueRanks[i] == UniqueRanks[i+4] - 4) {
-  //       player.StraightBool = true;
-  //     } 
-  //     else{
-  //       player.StraightBool = false;
-  //       break;
-  //     }
-  //   }
-  // }
+  if(player.StraightBool == true){ //check for higher straight
+
+    for (let i = 0; i < UniqueRanks.length-4; i++) {
+      if (UniqueRanks[i] == UniqueRanks[i+1] - 1 && UniqueRanks[i] == UniqueRanks[i+2] - 2 && UniqueRanks[i] == UniqueRanks[i+3] - 3 && UniqueRanks[i] == UniqueRanks[i+4] - 4) {
+        player.StraightBool = true;
+      } 
+      else{
+        player.StraightBool = false;
+        break;
+      }
+    }
+
+  } else{ //check for straight
+
+
+    for (let i = 0; i < UniqueRanks.length-4; i++) {
+      if (UniqueRanks[i] == UniqueRanks[i+1] - 1 && UniqueRanks[i] == UniqueRanks[i+2] - 2 && UniqueRanks[i] == UniqueRanks[i+3] - 3 && UniqueRanks[i] == UniqueRanks[i+4] - 4) {
+        player.StraightBool = true;
+      } 
+      else{
+        player.StraightBool = false;
+        break;
+      }
+    }
+  }
 
   // Check for low straights 
   if(player.StraightBool == 0){

@@ -33,11 +33,12 @@ function createPlayer(name, buyin) {
     chipCount: buyin,
     sortedHand: [],
     winningHand: new Array(5),
-    FlushBool: 0,
-    StraightBool: 0,
-    ThreeOfaKindBool: 0,
-    TwoPairBool: 0,
-    PairBool: 0,
+    QuadBool: false,
+    FlushBool: false,
+    StraightBool: false,
+    ThreeOfaKindBool: false,
+    TwoPairBool: false,
+    PairBool: false,
   };
 
   Object.seal(player)
@@ -156,8 +157,8 @@ export function determineWinner(player1, player2, communityCards) {
   player1.sortedHand = sortCardsByRank(player1.hand.concat(communityCards.cards));
   player2.sortedHand = sortCardsByRank(player2.hand.concat(communityCards.cards));
 
-  const player1Rank = rankHand(player1); // Determine the rank of player 1's hand 
-  const player2Rank = rankHand(player2); // Determine the rank of player 2's hand 
+  const player1Rank = handFlags(player1); // Determine the rank of player 1's hand 
+  const player2Rank = handFlags(player2); // Determine the rank of player 2's hand 
 
   
 
@@ -199,31 +200,163 @@ function sortCardsByRank(cards) {
   });
 }
 
-function rankHand(player) {
+function handFlags(player) {
   //console.log("Cards " + cards);
   console.log(player.sortedHand);
 
-  if (isRoyalFlush(player)) {                  // not working
-    return 10;
-  } else if (isStraightFlush(player)) {        // not Working
-    return 9;
-  } else if (isFourOfAKind(player)) {          // not Working
-    return 8;
-  } else if (isFullHouse(player)) {            // not Working
-    return 7;
-  } else if (isFlush(player)) {                // Working
-    return 6;
-  } else if (isStraight(player)) {             // Working
-    return 5;
-  } else if (isThreeOfAKind(player)) {         // not Working
-    return 4;
-  } else if (isTwoPair(player)) {              // not Working
-    return 3;
-  } else if (isPair(player)) {                 // Working
-    return 2;
-  } else {
-    return 1;
+  // set flags
+  // searchTwoPair(player)
+  // searchThreeOfAKind(player)
+  searchStraight(player)
+  searchFlush(player)
+  searchFourOfAKind(player)
+
+
+
+  // if (isRoyalFlush(player)) {                  // not working
+  //   return 10;
+  // } else if (isStraightFlush(player)) {        // not Working
+  //   return 9;
+  // } else if (isFourOfAKind(player)) {          // not Working
+  //   return 8;
+  // } else if (isFullHouse(player)) {            // not Working
+  //   return 7;
+  // } else if (isFlush(player)) {                // Working
+  //   return 6;
+  // } else if (isStraight(player)) {             // Working
+  //   return 5;
+  // } else if (isThreeOfAKind(player)) {         // not Working
+  //   return 4;
+  // } else if (isTwoPair(player)) {              // not Working
+  //   return 3;
+  // } else if (isPair(player)) {                 // Working
+  //   return 2;
+  // } else {
+  //   return 1;
+  // }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function searchTwoPair(player){
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function searchThreeOfAKind(player){
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function searchStraight(player){
+
+  console.log("Checking Straight...");
+  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = [];
+
+  // get ranks for each card
+  // assign weights for each card value
+
+  for(var i = 0; i < player.sortedHand.length; i++){
+    CardRanks[i] = player.sortedHand[i][0];
+    CardRanks[i] = rankOrder[CardRanks[i]];
   }
+
+  // function to get unique card ranks from array
+  var UniqueRanks = CardRanks.filter((value, index, self) => {    
+    return self.indexOf(value) === index;
+  });
+
+  // impossible for stright if there are not at least 5 unique ranks
+  if(UniqueRanks.length < 5){
+    player.StraightBool = false;
+  }
+
+  // Check for the special case of A-5-4-3-2, which is a valid straight (Working)
+  if (UniqueRanks.includes(13) && UniqueRanks.includes(4) && UniqueRanks.includes(3) && UniqueRanks.includes(2) && UniqueRanks.includes(1)) {
+    player.StraightBool = 1;
+    if(CardRanks.includes(13)){
+      let index = CardRanks.indexOf(13); // Get the index of the element
+      player.winningHand[0] = player.sortedHand[index]; // Add the element to the new array
+    }
+    if(CardRanks.includes(1)){
+      let index = CardRanks.indexOf(1); // Get the index of the element
+      player.winningHand[1] = player.sortedHand[index]; // Add the element to the new array
+    }
+    if(CardRanks.includes(2)){
+      let index = CardRanks.indexOf(2); // Get the index of the element
+      player.winningHand[2] = player.sortedHand[index]; // Add the element to the new array
+    }
+    if(CardRanks.includes(3)){
+      let index = CardRanks.indexOf(3); // Get the index of the element
+      player.winningHand[3] = player.sortedHand[index]; // Add the element to the new array
+    }
+    if(CardRanks.includes(4)){
+      let index = CardRanks.indexOf(4); // Get the index of the element
+      player.winningHand[4] = player.sortedHand[index]; // Add the element to the new array
+    }
+    player.StraightBool = true
+  }
+  console.log(player.name)
+  // console.log(player.sortedHand)
+  for (let i = 0; i < UniqueRanks.length-4; i++) {
+    
+    if (UniqueRanks[i] == UniqueRanks[i+1] - 1 && UniqueRanks[i] == UniqueRanks[i+2] - 2 && UniqueRanks[i] == UniqueRanks[i+3] - 3 && UniqueRanks[i] == UniqueRanks[i+4] - 4) {
+      // flag straight
+      player.StraightBool = true;
+      break;
+    } 
+
+    else{
+      player.StraightBool = false;
+    }
+  }
+  // console.log(player)
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function searchFlush(player){
+  console.log("Checking Flush...");
+  // To check for a flush
+  // Iterate through hand from top rank to low rank, looking for 5 of same suit. 
+  // No need to check 4th card, as there isn't enough for a flush anyways
+
+  var highCard = 0;
+
+  for(var i = 6; i > 4; i--){
+    var curSuit = player.sortedHand[i][1];
+    for(var j = i; j > 0; j--){
+      if(curSuit == player.sortedHand[j][1]){ player.FlushBool = true;}
+    }
+  }
+  // console.log(player)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function searchFourOfAKind(player){
+  console.log("Checking 4 Of A Kind...");
+   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = [];
+  // get ranks for each card
+  // assign weights for each card value
+  for(var i = 0; i < player.sortedHand.length; i++){
+    CardRanks[i] = player.sortedHand[i][0];
+    CardRanks[i] = rankOrder[CardRanks[i]];
+  }
+
+  //need 4 iterations of loop to check 7 card slots
+  for (let i = 0; i < 4; i++) {
+    if (CardRanks[i] === CardRanks[i + 1] && CardRanks[i + 1] === CardRanks[i + 2] && CardRanks[i + 2] === CardRanks[i + 3]) {
+      player.QuadBool = true
+      break
+    }
+    else{
+      player.QuadBool = false
+    }
+  }
+
+
+  console.log(player)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -264,22 +397,7 @@ function isStraightFlush(player) {
 // need to check for higher quads (do in determineWinner()? )
 function isFourOfAKind(player) {
 
-  console.log("Checking 4 Of A Kind...");
-   const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
-  var CardRanks = [];
-  // get ranks for each card
-  // assign weights for each card value
-  for(var i = 0; i < player.sortedHand.length; i++){
-    CardRanks[i] = player.sortedHand[i][0];
-    CardRanks[i] = rankOrder[CardRanks[i]];
-  }
 
-  //need 4 iterations of loop to check 7 card slots
-  for (let i = 0; i < 4; i++) {
-    if (CardRanks[i] === CardRanks[i + 1] && CardRanks[i + 1] === CardRanks[i + 2] && CardRanks[i + 2] === CardRanks[i + 3]) {
-      return true;
-    }
-  }
   return false;
 }
 
@@ -298,18 +416,7 @@ function isFullHouse(player) {
 // Working
 // need to check for high card (do in determineWinner()? )
 function isFlush(player) {
-  console.log("Checking Flush...");
-  // To check for a flush
-  // Iterate through hand from top rank to low rank, looking for 5 of same suit. 
-  // No need to check 4th card, as there isn't enough for a flush anyways
-var flushCount = 0;
-var highCard = 0;
-
-  for(var i = 6; i > 4; i--){
-    var curSuit = player.sortedHand[i][1];
-    for(var j = i; j > 0; j--){
-      if(curSuit == player.sortedHand[j][1]){ flushCount++;}
-    }
+  var flushCount = 0;
     if(flushCount >= 5){ //We have a flush. Determine best flush and set it in player.winningHand before returning true
       for(i = 0; i < player.sortedHand.length; i++){
         if((getRank(player.sortedHand[i]) > highCard) && (player.sortedHand[i][1] == curSuit)){
@@ -328,130 +435,16 @@ var highCard = 0;
       player.FlushBool = 1;
       return true; 
     }
-    flushCount = 0;
-  }
+  flushCount = 0;
+  
   return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Working
+// not Working
 // need to check for high card (do in determineWinner()? )
 function isStraight(player) {
-  console.log("Checking Straight...");
-  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
-  var CardRanks = [];
-
-  // get ranks for each card
-  // assign weights for each card value
-
-  for(var i = 0; i < player.sortedHand.length; i++){
-    CardRanks[i] = player.sortedHand[i][0];
-    CardRanks[i] = rankOrder[CardRanks[i]];
-  }
-
-  // function to get unique card ranks from array
-  var UniqueRanks = CardRanks.filter((value, index, self) => {    
-    return self.indexOf(value) === index;
-  });
-
-  // impossible for stright if there are not at least 5 unique ranks
-  if(UniqueRanks.length < 5){
-    return false;
-  }
-
-  // Check for the special case of A-5-4-3-2, which is a valid straight (Working)
-  if (UniqueRanks.includes(13) && UniqueRanks.includes(4) && UniqueRanks.includes(3) && UniqueRanks.includes(2) && UniqueRanks.includes(1)) {
-    player.StraightBool = 1;
-    if(CardRanks.includes(13)){
-      let index = CardRanks.indexOf(13); // Get the index of the element
-      player.winningHand[0] = player.sortedHand[index]; // Add the element to the new array
-    }
-    if(CardRanks.includes(1)){
-      let index = CardRanks.indexOf(1); // Get the index of the element
-      player.winningHand[1] = player.sortedHand[index]; // Add the element to the new array
-    }
-    if(CardRanks.includes(2)){
-      let index = CardRanks.indexOf(2); // Get the index of the element
-      player.winningHand[2] = player.sortedHand[index]; // Add the element to the new array
-    }
-    if(CardRanks.includes(3)){
-      let index = CardRanks.indexOf(3); // Get the index of the element
-      player.winningHand[3] = player.sortedHand[index]; // Add the element to the new array
-    }
-    if(CardRanks.includes(4)){
-      let index = CardRanks.indexOf(4); // Get the index of the element
-      player.winningHand[4] = player.sortedHand[index]; // Add the element to the new array
-    }
-    player.StraightBool = true
-  }
-
-  // optimization in progress
-  if(player.StraightBool == true){ //check for higher straight
-
-    for (let i = 0; i < UniqueRanks.length-4; i++) {
-      if (UniqueRanks[i] == UniqueRanks[i+1] - 1 && UniqueRanks[i] == UniqueRanks[i+2] - 2 && UniqueRanks[i] == UniqueRanks[i+3] - 3 && UniqueRanks[i] == UniqueRanks[i+4] - 4) {
-        player.StraightBool = true;
-      } 
-      else{
-        player.StraightBool = false;
-        break;
-      }
-    }
-
-  } else{ //check for straight
-
-
-    for (let i = 0; i < UniqueRanks.length-4; i++) {
-      if (UniqueRanks[i] == UniqueRanks[i+1] - 1 && UniqueRanks[i] == UniqueRanks[i+2] - 2 && UniqueRanks[i] == UniqueRanks[i+3] - 3 && UniqueRanks[i] == UniqueRanks[i+4] - 4) {
-        player.StraightBool = true;
-      } 
-      else{
-        player.StraightBool = false;
-        break;
-      }
-    }
-  }
-
-  // Check for low straights 
-  if(player.StraightBool == 0){
-    for (let i = 0; i < 4; i++) {
-      if (UniqueRanks[i] == UniqueRanks[i+1] - 1) {
-        player.StraightBool = 1;
-      } 
-      else{
-        player.StraightBool = 0;
-        break;
-      }
-    }
-  }
-
-  // Check for high straights
-  if(player.StraightBool == 0){
-
-    for (let i = UniqueRanks.length-1; i > UniqueRanks.length-5; i--) {
-      if (UniqueRanks[i] == UniqueRanks[i-1] + 1) {
-        player.StraightBool = 1;
-      } 
-      else{
-        player.StraightBool = 0;
-        break;
-      }
-    }
-  }
-
-  // Check for middle straights 
-  if(player.StraightBool == 0){
-    for (let i = 1; i < 5; i++) {
-      if (UniqueRanks[i] == UniqueRanks[i+1] - 1) {
-        player.StraightBool = 1;
-      } 
-      else{
-        player.StraightBool = 0;
-        break;
-      }
-    }
-  }
 
   if(player.StraightBool == 1){
     return true;

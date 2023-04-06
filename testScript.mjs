@@ -65,16 +65,16 @@ console.log(player1);*/
 //TEST FOR STRAIGHT FLUSH
 // not theroughly tested
 
-// const player1 ={ name: 'Player 1', cards: [ '8♡', '4♡' ] }
-// const player2 = { name: 'Player 2', cards: [ '9♢', 'Q♢' ] }
-// var commCards = [ '8♠', 'K♢', '8♢', 'J♢', '10♣' ]
+player1.hand = [ '8♡', '4♡' ] 
+player2.hand = [ '9♢', 'Q♢' ] 
+commCards.cards = [ '8♠', '10♢', '8♢', 'J♢', '10♣' ]
 
 // TEST FOR QUADS("FOUR OF A KIND")
 // not theroughly tested
 
-player1.hand = [ 'J♢', 'J♠' ];
-player2.hand = [ '2♢', '2♡' ];
-commCards.cards = [ '2♣', 'J♡', 'K♠', 'J♣', '2♠' ];
+// player1.hand = [ 'J♢', 'J♠' ];
+// player2.hand = [ '2♢', '2♡' ];
+// commCards.cards = [ '2♣', 'J♡', 'K♠', 'J♣', '2♠' ];
 
 
 // TEST FOR FLUSH
@@ -83,8 +83,10 @@ commCards.cards = [ '2♣', 'J♡', 'K♠', 'J♣', '2♠' ];
 // commCards.cards = [ '6♣', '5♠', 'K♠', 'Q♠', '7♠' ];
 
 
+// console.log(player1);
+// console.log(player2);
+var winner = functions.determineWinner(player1, player2, commCards);
 console.log(player1);
 console.log(player2);
-var winner = functions.determineWinner(player1, player2, commCards);
 console.log("%%%%%%%%%%%%%%%%%%%%%\nTEST WINNER\n%%%%%%%%%%%%%%%%%%%%% ");
 console.log(winner);

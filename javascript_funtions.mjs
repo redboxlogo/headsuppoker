@@ -157,8 +157,8 @@ export function determineWinner(player1, player2, communityCards) {
   player1.sortedHand = sortCardsByRank(player1.hand.concat(communityCards.cards));
   player2.sortedHand = sortCardsByRank(player2.hand.concat(communityCards.cards));
 
-  const player1Rank = handFlags(player1); // Determine the rank of player 1's hand 
-  const player2Rank = handFlags(player2); // Determine the rank of player 2's hand 
+  const player1Rank = handRank(player1); // Determine the rank of player 1's hand 
+  const player2Rank = handRank(player2); // Determine the rank of player 2's hand 
 
   
 
@@ -200,16 +200,16 @@ function sortCardsByRank(cards) {
   });
 }
 
-function handFlags(player) {
+function handRank(player) {
   //console.log("Cards " + cards);
   console.log(player.sortedHand);
 
   // set flags
   // searchTwoPair(player)
   // searchThreeOfAKind(player)
-  searchStraight(player)
+  // searchStraight(player)
   searchFlush(player)
-  searchFourOfAKind(player)
+  // searchFourOfAKind(player)
 
 
 
@@ -239,11 +239,61 @@ function handFlags(player) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function searchTwoPair(player){
 
+  console.log("Checking Pair and Two Pair...");
+
+  let pairs = 0;
+  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = []
+  // get ranks for each card
+  // assign weights for each card value
+  for(var i = 0; i < player.sortedHand.length; i++){
+    CardRanks[i] = player.sortedHand[i][0];
+    CardRanks[i] = rankOrder[CardRanks[i]];
+  }
+
+  for (let i = 0; i < player.sortedHand.length - 1; i++) {
+    if (CardRanks[i] === CardRanks[i + 1]) {
+      pairs++;
+      i++;
+    }
+  }
+  // console.log(pairs)
+  if(pairs == 0){
+    player.PairBool = false
+    player.TwoPairBool = false
+  }
+  else if (pairs == 1){
+    player.PairBool = true
+  }
+  else{
+    player.PairBool = true
+    player.TwoPairBool = true
+  }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function searchThreeOfAKind(player){
+  console.log("Checking 3 Of A Kind...");
+  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+  var CardRanks = []
+  // get ranks for each card
+  // assign weights for each card value
+  for(var i = 0; i < player.sortedHand.length; i++){
+    CardRanks[i] = player.sortedHand[i][0];
+    CardRanks[i] = rankOrder[CardRanks[i]];
+  }
 
+  //need 5 iterations of loop to check 7 card slots
+  for (let i = 0; i < 5; i++) {
+    if (CardRanks[i] === CardRanks[i + 1] && CardRanks[i + 1] === CardRanks[i + 2] ) {
+      player.ThreeOfaKindBool = true
+      break
+    }
+    else{
+      player.ThreeOfaKindBool = false
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -273,31 +323,10 @@ function searchStraight(player){
 
   // Check for the special case of A-5-4-3-2, which is a valid straight (Working)
   if (UniqueRanks.includes(13) && UniqueRanks.includes(4) && UniqueRanks.includes(3) && UniqueRanks.includes(2) && UniqueRanks.includes(1)) {
-    player.StraightBool = 1;
-    if(CardRanks.includes(13)){
-      let index = CardRanks.indexOf(13); // Get the index of the element
-      player.winningHand[0] = player.sortedHand[index]; // Add the element to the new array
-    }
-    if(CardRanks.includes(1)){
-      let index = CardRanks.indexOf(1); // Get the index of the element
-      player.winningHand[1] = player.sortedHand[index]; // Add the element to the new array
-    }
-    if(CardRanks.includes(2)){
-      let index = CardRanks.indexOf(2); // Get the index of the element
-      player.winningHand[2] = player.sortedHand[index]; // Add the element to the new array
-    }
-    if(CardRanks.includes(3)){
-      let index = CardRanks.indexOf(3); // Get the index of the element
-      player.winningHand[3] = player.sortedHand[index]; // Add the element to the new array
-    }
-    if(CardRanks.includes(4)){
-      let index = CardRanks.indexOf(4); // Get the index of the element
-      player.winningHand[4] = player.sortedHand[index]; // Add the element to the new array
-    }
     player.StraightBool = true
+
+
   }
-  console.log(player.name)
-  // console.log(player.sortedHand)
   for (let i = 0; i < UniqueRanks.length-4; i++) {
     
     if (UniqueRanks[i] == UniqueRanks[i+1] - 1 && UniqueRanks[i] == UniqueRanks[i+2] - 2 && UniqueRanks[i] == UniqueRanks[i+3] - 3 && UniqueRanks[i] == UniqueRanks[i+4] - 4) {
@@ -310,7 +339,6 @@ function searchStraight(player){
       player.StraightBool = false;
     }
   }
-  // console.log(player)
 
 }
 
@@ -321,16 +349,36 @@ function searchFlush(player){
   // Iterate through hand from top rank to low rank, looking for 5 of same suit. 
   // No need to check 4th card, as there isn't enough for a flush anyways
 
-  var highCard = 0;
 
-  for(var i = 6; i > 4; i--){
+  var flushCount = 0;
+  var highCard = 0;
+  for(var i = 6; i > 3; i--){
     var curSuit = player.sortedHand[i][1];
+    flushCount++;
     for(var j = i; j > 0; j--){
-      if(curSuit == player.sortedHand[j][1]){ player.FlushBool = true;}
+      if(curSuit == player.sortedHand[j][1]){ flushCount++;}
     }
+    if(flushCount >= 5){ //We have a flush. Determine best flush and set it in player.winningHand
+      let curSuitArray = [];
+
+      for(var k = 0; k < player.sortedHand.length; k++){
+        console.log(getRank(player.sortedHand[k]))
+        if(player.sortedHand[k][1] == curSuit){
+
+          curSuitArray.push(player.sortedHand[k])
+
+        }
+      }
+      console.log(curSuitArray)
+
+
+      player.FlushBool = true;
+      
+    }
+    flushCount = 0;
   }
-  // console.log(player)
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function searchFourOfAKind(player){
@@ -356,7 +404,7 @@ function searchFourOfAKind(player){
   }
 
 
-  console.log(player)
+  // console.log(player)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -368,29 +416,141 @@ function getHighCard(cards) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// not Working
+
 function isRoyalFlush(player) {
   console.log("Checking Royal Flush...");
-  return (player.isFlush && player.winningHand[0][0] == 10 && player.winningHand[4][0] == A);
-  //return isStraightFlush(cards) && cards[0].rank === 'Ten' && cards[4].rank === 'Ace';
+
+  if(player.FlushBool == true && player.StraightBool == true){
+
+    if(player.winningHand[0][0] == "10" && player.winningHand[4][0] == "A"){
+      return true
+    }
+    else{
+      return false
+    }
+
+  } 
+  else{
+    return false;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // not Working
-// need to check for higher quads (do in determineWinner()? )modify or
 function isStraightFlush(player) {
   console.log("Checking Straight Flush...");
-  if(player.isFlush && player.isStraight){
+
+  if(player.FlushBool == true && player.StraightBool == true){
+    // Load flush to winning hand
+
     //verifyStraightFlush(player); //Need to ensure straightFlush is returned. 
-    // Edge case is if there is a 6-card flush, and straight consists of lower 5 cards. isFlush() will return high 5 cards which
+    // Edge case is if there is a (6 or 7)-card flush, and straight consists of lower 5 cards. searchFlush() will return high 5 cards which
     // will not include the straight. There will be a separate function to handle this edge case. I'm sure there will be more
     // edge cases as well. 
-  }
-  return (player.isFlush && player.isStraight);
-  //return isFlush(cards) && isStraight(cards);
-}
 
+    // highest flush is a straight
+    if((getRank(player.winningHand[0])) == (getRank(player.winningHand[4])-4)){
+      return true
+    }
+    // highest flush not a straight
+    else{
+      var flushCount = 0;
+      for(var i = 6; i > 3; i--){
+        var curSuit = player.sortedHand[i][1];
+        for(var j = i; j > 0; j--){
+          if(curSuit == player.sortedHand[j][1]){ flushCount++;}
+        } // j loop
+        if(flushCount >= 5){ //We have a flush. Determine straight flush and set it in player.winningHand\
+
+          let curSuitArray = [];
+          for(var k = 0; k < player.sortedHand; k++){
+            if(player.sortedHand[k][1] == curSuit){
+
+              curSuitArray.push[player.sortedHand[k]]
+
+            }
+
+          } // k loop
+
+          const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
+          var CardRanks = [];
+        
+          // get ranks for each card
+          // assign weights for each card value
+        
+          for(var i = 0; i < curSuitArray.length; i++){
+            CardRanks[i] = curSuitArray[i][0];
+            CardRanks[i] = rankOrder[CardRanks[i]];
+          }
+        
+          // function to get unique card ranks from array
+          var UniqueRanks = CardRanks.filter((value, index, self) => {    
+            return self.indexOf(value) === index;
+          });
+
+          for (var l = UniqueRanks.length-1; l > UniqueRanks.length-4; l--) {
+    
+            if (UniqueRanks[l] == UniqueRanks[l-1] + 1 && UniqueRanks[l] == UniqueRanks[l-2] + 2 && UniqueRanks[l] == UniqueRanks[l-3] + 3 && UniqueRanks[l] == UniqueRanks[l-4] + 4) {
+
+              let index = CardRanks.indexOf(UniqueRanks[l-4]); // Get the index of the element
+              player.winningHand[0] = player.sortedHand[index]; // Add the element to the new array
+
+              index = CardRanks.indexOf(UniqueRanks[l-3]); // Get the index of the element
+              player.winningHand[1] = player.sortedHand[index]; // Add the element to the new array
+
+              index = CardRanks.indexOf(UniqueRanks[l-2]); // Get the index of the element
+              player.winningHand[2] = player.sortedHand[index]; // Add the element to the new array
+
+              index = CardRanks.indexOf(UniqueRanks[l-1]); // Get the index of the element
+              player.winningHand[3] = player.sortedHand[index]; // Add the element to the new array
+
+              index = CardRanks.indexOf(UniqueRanks[l]); // Get the index of the element
+              player.winningHand[4] = player.sortedHand[index]; // Add the element to the new array
+
+              return true;
+            } 
+            else if(UniqueRanks.includes(13) && UniqueRanks.includes(4) && UniqueRanks.includes(3) && UniqueRanks.includes(2) && UniqueRanks.includes(1)){
+
+          
+
+              let index = CardRanks.indexOf(13); // Get the index of the element
+              player.winningHand[0] = player.sortedHand[index]; // Add the element to the new array
+
+              index = CardRanks.indexOf(1); // Get the index of the element
+              player.winningHand[1] = player.sortedHand[index]; // Add the element to the new array
+
+              index = CardRanks.indexOf(2); // Get the index of the element
+              player.winningHand[2] = player.sortedHand[index]; // Add the element to the new array
+
+              index = CardRanks.indexOf(3); // Get the index of the element
+              player.winningHand[3] = player.sortedHand[index]; // Add the element to the new array
+
+              index = CardRanks.indexOf(4); // Get the index of the element
+              player.winningHand[4] = player.sortedHand[index]; // Add the element to the new array
+
+              return true
+            
+            }
+            else{
+              return false;
+            }
+          }
+        }
+        else{
+          player.FlushBool = false;
+        }
+        flushCount = 0;
+      
+      } // i loop
+    }
+  }
+
+  else{
+    return false
+  }
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // not Working
@@ -416,26 +576,7 @@ function isFullHouse(player) {
 // Working
 // need to check for high card (do in determineWinner()? )
 function isFlush(player) {
-  var flushCount = 0;
-    if(flushCount >= 5){ //We have a flush. Determine best flush and set it in player.winningHand before returning true
-      for(i = 0; i < player.sortedHand.length; i++){
-        if((getRank(player.sortedHand[i]) > highCard) && (player.sortedHand[i][1] == curSuit)){
-          //If we have a new higher card that's of the flush suit, push all cards down a slot and put this high card at the top
-          
-          // why not use shift()?
-          
-          highCard = getRank(player.sortedHand[i]);
-          player.winningHand[0] = player.winningHand[1];
-          player.winningHand[1] = player.winningHand[2];
-          player.winningHand[2] = player.winningHand[3];
-          player.winningHand[3] = player.winningHand[4];
-          player.winningHand[4] = player.sortedHand[i];
-        }
-      }
-      player.FlushBool = 1;
-      return true; 
-    }
-  flushCount = 0;
+
   
   return false;
 }
@@ -459,24 +600,7 @@ function isStraight(player) {
 // need to check for high card (do in determineWinner()? )
 
 function isThreeOfAKind(player) {
-  console.log("Checking 3 Of A Kind...");
-  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
-  var CardRanks = []
-  // get ranks for each card
-  // assign weights for each card value
-  for(var i = 0; i < player.sortedHand.length; i++){
-    CardRanks[i] = player.sortedHand[i][0];
-    CardRanks[i] = rankOrder[CardRanks[i]];
-  }
 
-  //need 5 iterations of loop to check 7 card slots
-  for (let i = 0; i < 5; i++) {
-    if (CardRanks[i] === CardRanks[i + 1] && CardRanks[i + 1] === CardRanks[i + 2] ) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -484,24 +608,7 @@ function isThreeOfAKind(player) {
 // need to check for high card (do in determineWinner()? )
 
 function isTwoPair(player) {
-  console.log("Checking Two Pair...");
-  let pairs = 0;
-  const rankOrder = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8, 1: 9, J: 10, Q: 11, K: 12, A: 13};
-  var CardRanks = []
-  // get ranks for each card
-  // assign weights for each card value
-  for(var i = 0; i < player.sortedHand.length; i++){
-    CardRanks[i] = player.sortedHand[i][0];
-    CardRanks[i] = rankOrder[CardRanks[i]];
-  }
 
-  for (let i = 0; i < player.sortedHand.length - 1; i++) {
-    if (CardRanks[i] === CardRanks[i + 1] ) {
-      pairs++;
-      i++;
-    }
-  }
-  return pairs === 2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

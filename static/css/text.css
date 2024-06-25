@@ -130,3 +130,7 @@ pre {
 .on-white {
     color: #8a8b8c;
 }
+
+.aligncenter {
+    text-align: center;
+}

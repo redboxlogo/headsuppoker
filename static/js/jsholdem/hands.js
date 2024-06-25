@@ -677,6 +677,8 @@ function test_hi_card (player) {
   return hash_result;
 }
 
+
+//compare the 2 cards to test rank
 function compare_hi_card (a, b) {
   for (var i = 0; i < 5; i++) {
     var hi_a = a["hi_card_" + i];
@@ -687,6 +689,7 @@ function compare_hi_card (a, b) {
   return "c";
 }
 
+// card suit getter 
 function get_suit (card) {
   if (card) {
     return card.substring(0, 1);
@@ -694,12 +697,14 @@ function get_suit (card) {
   return "";
 }
 
+// rank getter
 function get_rank (card) {
   if (card) {
     return card.substring(1) - 0;
   }
   return "";
 }
+
 
 function get_predominant_suit (my_cards) {
   var suit_count = [0, 0, 0, 0];

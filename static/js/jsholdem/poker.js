@@ -33,6 +33,7 @@ function my_pseudo_alert (text) {
   gui_write_modal_box(html);
 }
 
+// player creation ... object?
 function player (name, bankroll, carda, cardb, status, total_bet,
                  subtotal_bet) {
   this.name = name;
@@ -58,6 +59,7 @@ function has_local_storage () {
   }
 }
 
+// function to test local storage on local client
 function init () {
   if (!has_local_storage()) {
     my_pseudo_alert("Your browser do not support localStorage - " +
@@ -76,6 +78,7 @@ function init () {
   new_game();
 }
 
+// initialize a deck
 function make_deck () {
   var i;
   var j = 0;
@@ -87,6 +90,7 @@ function make_deck () {
   }
 }
 
+// function handling how many opponents
 function handle_how_many_reply (opponents) {
   gui_write_modal_box("");
   write_settings_frame();
@@ -95,6 +99,7 @@ function handle_how_many_reply (opponents) {
   gui_show_game_response();
 }
 
+// ask user how many opponents
 function ask_how_many_opponents () {
   var quick_values = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   var asking = "<b><font size=+4 color=red>" +
@@ -112,6 +117,7 @@ function ask_how_many_opponents () {
   var html10 = asking + "</td></tr></table></td></tr></table></body></html>";
   gui_write_modal_box(html9 + html10);
 }
+
 
 function initialize_game () {
   gui_hide_poker_table();
@@ -172,6 +178,7 @@ function new_game_continues (req_no_opponents) {
   button_index = Math.floor(Math.random() * players.length);
   new_round();
 }
+
 
 function number_of_active_players () {
   var num_playing = 0;
@@ -237,6 +244,7 @@ function collect_cards () {
   }
 }
 
+// randomize shuffling of cards
 function new_shuffle () {
   function get_random_int (max) {
     return Math.floor(Math.random() * max);
@@ -250,11 +258,14 @@ function new_shuffle () {
   }
 }
 
+// manager for deck shuffling
 function shuffle () {
   new_shuffle();
   deck_index = 0;
 }
 
+
+// blinds are determined by number of opponents
 function blinds_and_deal () {
   SMALL_BLIND = 5;
   BIG_BLIND = 10;
@@ -380,20 +391,22 @@ function deal_fifth () {
   setTimeout(unroll_table, 1000, /*last_pos*/4, /*start_pos*/4, go_to_betting);
 }
 
+
+// ==========================================================================
 function main () {
   gui_hide_guick_raise();
   var increment_bettor_index = 0;
   if (players[current_bettor_index].status == "BUST" ||
-      players[current_bettor_index].status == "FOLD") {
+      players[current_bettor_index].status == "FOLD") {                           // check if the player has folded
     increment_bettor_index = 1;
   } else if (!has_money(current_bettor_index)) {
     players[current_bettor_index].status = "CALL";
-    increment_bettor_index = 1;
+    increment_bettor_index = 1;                                                   //move to the next player
   } else if (players[current_bettor_index].status == "CALL" &&
-             players[current_bettor_index].subtotal_bet == current_bet_amount) {
+             players[current_bettor_index].subtotal_bet == current_bet_amount) {  //check for a call and move to next player
     increment_bettor_index = 1;
   } else {
-    players[current_bettor_index].status = "";
+    players[current_bettor_index].status = "";                                    // betting
     if (current_bettor_index == 0) {
       var call_button_text = "<u>C</u>all";
       var fold_button_text = "<u>F</u>old";
@@ -893,7 +906,9 @@ function the_bet_function (player_index, bet_amount) {
   return 1;
 }
 
-function human_call () {
+
+// function to handle human call action
+function human_call () { 
   // Clear buttons
   gui_hide_fold_call_click();
   players[0].status = "CALL";
@@ -903,6 +918,8 @@ function human_call () {
   main();
 }
 
+
+// function to handle human bet
 function handle_human_bet (bet_amount) {
   if (bet_amount < 0 || isNaN(bet_amount)) bet_amount = 0;
   var to_call = current_bet_amount - players[0].subtotal_bet;
@@ -919,6 +936,7 @@ function handle_human_bet (bet_amount) {
   }
 }
 
+//function to handle human fold
 function human_fold () {
   players[0].status = "FOLD";
   // Clear the buttons - not able to call
@@ -930,6 +948,7 @@ function human_fold () {
   main();
 }
 
+// handle bet from bot
 function bet_from_bot (x) {
   var b = 0;
   var n = current_bet_amount - players[x].subtotal_bet;

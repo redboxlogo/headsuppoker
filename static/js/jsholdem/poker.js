@@ -92,25 +92,31 @@ function make_deck () {
 
 // function handling how many opponents
 function handle_how_many_reply (opponents) {
+  opponents = 1
   gui_write_modal_box("");
   write_settings_frame();
   new_game_continues(opponents);
+
   gui_initialize_css();         // Load background images
   gui_show_game_response();
 }
 
 // ask user how many opponents
+// currently not used
 function ask_how_many_opponents () {
+
   var quick_values = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   var asking = "<b><font size=+4 color=red>" +
                "So, how many opponents do you want?" +
                "</font></b><br>";
+
   for (var i = 0; i < 9; i++) {
     if (quick_values[i]) {
       asking += "<font size=+4>" +
                 "<a href='javascript:parent.handle_how_many_reply(" +
                 quick_values[i] + ")'>" + quick_values[i] +
                 " </a></font>" + "&nbsp;&nbsp;&nbsp;";
+
     }
   }
   var html9 = "<td><table align=center><tr><td align=center>";
@@ -136,12 +142,14 @@ function clear_player_cards (count) {
   }
 }
 
+// reset game settings
 function new_game () {
   START_DATE = new Date();
   NUM_ROUNDS = 0;
   HUMAN_WINS_AGAIN = 0;
   initialize_game();
-  ask_how_many_opponents();
+  // ask_how_many_opponents();
+  handle_how_many_reply(1);
 }
 
 function new_game_continues (req_no_opponents) {
